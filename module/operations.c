@@ -12,7 +12,8 @@
 * Return: ----
 *****************************************************************************/
 void OP_copyCoords(Coordinates src, Coordinates *dest) {
-	dest = &src;
+    dest->latitude = src.latitude;
+    dest->longitude = src.longitude;
 }
 
 /*****************************************************************************
@@ -31,7 +32,6 @@ long calculateDistance(Coordinates a, Coordinates b) {
 
 	h = sin(d_lat / 2) * sin(d_lat / 2) + cos(rad_a) * cos(rad_b) * sin(d_lon / 2) * sin(d_lon / 2);
 	c = 2 * atan2(sqrt(h), sqrt(1 - h));
-	c /= 1000;
 	d = 6371 * c;
 
 	return (d);
@@ -48,9 +48,9 @@ long calculateDistance(Coordinates a, Coordinates b) {
 *****************************************************************************/
 int OP_findNearest(int id_a, Coordinates coords_a, int id_b, Coordinates coords_b, Coordinates point) {
 	if (calculateDistance(coords_a, point) < calculateDistance(coords_b, point)) {
-	    return (id_b);
-	} else {
 	    return (id_a);
+	} else {
+	    return (id_b);
 	}
 }
 
