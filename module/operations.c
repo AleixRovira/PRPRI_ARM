@@ -3,7 +3,7 @@
 *          other useful operations.
 * Last changed: 11/03/2025
 *****************************************************************************/
-#include "operations.h"
+#include "../lib/operations.h"
 
 /*****************************************************************************
 * Purpose: Makes a copy of Coordinates.
