@@ -2,16 +2,18 @@
 #define _SHOP_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 
-struct Shop {
-    char name[50];
-    char address[100];
-    char phone[15];
-    char email[50];
-    char code[10];
-    float latitude;     // [-90.0, 90.0]
-    float longitude;    // [-180.0, 180.0]
-};
+typedef struct
+{
+    char *name;
+    char *address;
+    char *phone;
+    char *email;
+    char *code;
+    float latitude;  // [-90.0, 90.0]
+    float longitude; // [-180.0, 180.0]
+} Shop;
 
 void SHOP_register();
 

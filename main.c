@@ -20,8 +20,8 @@ void menu()
         switch (option)
         {
         case 1:
-            printf("\nYou selected Shop Register.\n");
-            // Call function for shop register here
+            printf("\nShop Register:\n");
+            SHOP_register();
             break;
         case 2:
             printf("\nYou selected User Register.\n");
