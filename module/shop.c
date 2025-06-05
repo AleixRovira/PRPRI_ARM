@@ -1,5 +1,33 @@
 #include "../lib/shop.h"
 
+Shop SHOP_findShopByCode(char *code)
+{
+    FILE *file = fopen("shops.txt", "r");
+    if (!file)
+    {
+        perror("Could not open shops.txt");
+        return (Shop){NULL, NULL, NULL, NULL, NULL, 0.0, 0.0};
+    }
+    
+    Shop shop = {NULL, NULL, NULL, NULL, NULL, 0.0f, 0.0f};
+    while (fscanf(file, "%ms %ms %ms %ms %ms %f %f", &shop.name, &shop.address, &shop.phone, &shop.email, &shop.code, &shop.latitude, &shop.longitude) == 7)
+    {
+        if (strcmp(shop.code, code) == 0)
+        {
+            fclose(file);
+            return shop;
+        }
+        free(shop.name);
+        free(shop.address);
+        free(shop.phone);
+        free(shop.email);
+        free(shop.code);
+    }
+
+    fclose(file);
+    return (Shop){NULL, NULL, NULL, NULL, NULL, 0.0f, 0.0f}; // Return an empty shop if not found
+}
+
 void SHOP_register()
 {
     Shop shop;
@@ -18,8 +46,6 @@ void SHOP_register()
 
     printf("\tEnter shop code: ");
     scanf("%ms", &shop.code);
-
-    printf("%s\n%s\n%s\n%s\n%s\n", shop.name, shop.address, shop.phone, shop.email, shop.code);
 
     free(shop.name);
     free(shop.address);
