@@ -1,8 +1,8 @@
+#include "lib/shop.h"
 #include <stdio.h>
 
 void menu()
 {
-
     printf("------------------------\n");
     printf("---LS Electronics Hub---\n");
     printf("------------------------\n\n");

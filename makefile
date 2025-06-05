@@ -4,11 +4,14 @@
 operations.o: module/operations.c
 	gcc -c module/operations.c -ggdb
 
-main.o: main.c
+shop.o: module/shop.c
+	gcc -c module/shop.c -ggdb
+
+main.o: main.c shop.o
 	gcc -c main.c -ggdb
 
-prod: main.o operations.o
-	gcc main.o operations.o -o prpr.exe -ggdb -lm
+prod: main.o shop.o operations.o
+	gcc main.o shop.o operations.o -o prpr.exe -ggdb -lm
 	rm *.o
 
 #TDD
