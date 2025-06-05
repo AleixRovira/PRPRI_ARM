@@ -1,6 +1,9 @@
 #all: prpr
 
 #Final code
+global.o: module/global.c
+	gcc -c module/global.c -ggdb
+
 operations.o: module/operations.c
 	gcc -c module/operations.c -ggdb
 
@@ -10,8 +13,8 @@ shop.o: module/shop.c
 main.o: main.c shop.o
 	gcc -c main.c -ggdb
 
-prod: main.o shop.o operations.o
-	gcc main.o shop.o operations.o -o prpr.exe -ggdb -lm
+prod: main.o shop.o operations.o global.o
+	gcc main.o shop.o operations.o global.o -o prpr.exe -ggdb -lm
 	rm *.o
 
 #TDD
@@ -21,6 +24,9 @@ TEST_operations.o: TDD/TEST_operations.c
 TEST_shop.o: TDD/TEST_shop.c
 	gcc -c TDD/TEST_shop.c -ggdb
 
+TEST_global.o: TDD/TEST_global.c
+	gcc -c TDD/TEST_global.c -ggdb
+
 TEST_operations: operations.o TEST_operations.o
 	gcc operations.o TEST_operations.o -o test.exe -ggdb -lm
 	rm *.o
@@ -28,7 +34,11 @@ TEST_operations: operations.o TEST_operations.o
 TEST_shop: shop.o TEST_shop.o
 	gcc shop.o TEST_shop.o -o test.exe -ggdb -lm
 
-test: TEST_operations TEST_shop
+TEST_global: global.o TEST_global.o
+	gcc global.o TEST_global.o -o test.exe -ggdb -lm
+	rm *.o
+
+test: TEST_operations TEST_shop TEST_global
 
 #Clean
 clean:
