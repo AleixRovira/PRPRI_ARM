@@ -2,13 +2,12 @@
 
 Shop SHOP_findShopByCode(char *code)
 {
-    FILE *file = fopen("shops.txt", "r");
+    FILE *file = fopen("files/shops.txt", "r");
     if (!file)
     {
-        perror("Could not open shops.txt");
         return (Shop){NULL, NULL, NULL, NULL, NULL, 0.0, 0.0};
     }
-    
+
     Shop shop = {NULL, NULL, NULL, NULL, NULL, 0.0f, 0.0f};
     while (fscanf(file, "%ms %ms %ms %ms %ms %f %f", &shop.name, &shop.address, &shop.phone, &shop.email, &shop.code, &shop.latitude, &shop.longitude) == 7)
     {
@@ -44,8 +43,18 @@ void SHOP_register()
     printf("\tEnter shop email: ");
     scanf("%ms", &shop.email);
 
-    printf("\tEnter shop code: ");
-    scanf("%ms", &shop.code);
+    Shop aux;
+    do
+    {
+        printf("\tEnter shop code: ");
+        scanf("%ms", &shop.code);
+        aux = SHOP_findShopByCode(shop.code);
+        if (aux.name != NULL)
+        {
+            printf("\nERROR: Shop code already exists. Please enter a different code.\n");
+            free(shop.code);
+        }
+    } while (aux.name != NULL);
 
     free(shop.name);
     free(shop.address);
