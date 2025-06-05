@@ -18,11 +18,17 @@ prod: main.o shop.o operations.o
 TEST_operations.o: TDD/TEST_operations.c
 	gcc -c TDD/TEST_operations.c -ggdb
 
+TEST_shop.o: TDD/TEST_shop.c
+	gcc -c TDD/TEST_shop.c -ggdb
+
 TEST_operations: operations.o TEST_operations.o
 	gcc operations.o TEST_operations.o -o test.exe -ggdb -lm
 	rm *.o
 
-test: TEST_operations
+TEST_shop: shop.o TEST_shop.o
+	gcc shop.o TEST_shop.o -o test.exe -ggdb -lm
+
+test: TEST_operations TEST_shop
 
 #Clean
 clean:
