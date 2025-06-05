@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include "../lib/shop.h"
 
 Shop SHOP_findShopByCode(char *code)
@@ -73,6 +75,11 @@ void SHOP_register()
             printf("\nERROR: Longitude must be between -180.0 and 180.0.\n");
         }
     } while (shop.longitude < -180.0f || shop.longitude > 180.0f);
+
+    char *buffer = NULL;
+    asprintf(&buffer, "%s;%s;%s;%s;%s;%.6f;%.6f", shop.code, shop.name, shop.address, shop.phone, shop.email, shop.latitude, shop.longitude);
+    GLOBAL_printLineInFile("files/shops.txt", buffer);
+    free(buffer);
     
     free(shop.code);
     free(shop.name);
