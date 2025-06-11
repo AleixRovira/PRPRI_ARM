@@ -15,6 +15,8 @@ typedef struct
     char *shop_code;
 } Staff;
 
+void STAFF_freeStaff(Staff *staff);
+Staff STAFF_findStaffByEmail(char *email);
 void STAFF_register();
 
 #endif

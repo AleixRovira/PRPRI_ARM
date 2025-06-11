@@ -54,10 +54,9 @@ void TEST_GLOBAL_validateEmail()
     }
 }
 
-int main()
+void TEST_GLOBAL_main()
 {
     TEST_GLOBAL_printLineInFile();
     TEST_GLOBAL_validatePassword();
     TEST_GLOBAL_validateEmail();
-    return 0;
 }

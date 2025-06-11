@@ -17,6 +17,7 @@ typedef struct
     float longitude; // [-180.0, 180.0]
 } Shop;
 
+void SHOP_freeShop(Shop *shop);
 Shop SHOP_findShopByCode(char *code);
 void SHOP_register();
 
