@@ -102,7 +102,7 @@ void TEST_OP_calculateAvgRating()
         printf("TEST_OP_calculateAvgRating: FAILED (got %.2f, expected 3.00)\n", avg);
 }
 
-int main()
+void TEST_OP_main()
 {
     TEST_OP_copyCoords();
     TEST_OP_findNearest();
@@ -110,5 +110,4 @@ int main()
     TEST_OP_sortAlphabetically();
     TEST_OP_isInRange();
     TEST_OP_calculateAvgRating();
-    return 0;
 }

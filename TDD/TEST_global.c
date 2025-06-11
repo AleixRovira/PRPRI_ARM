@@ -12,8 +12,51 @@ void TEST_GLOBAL_printLineInFile()
     }
 }
 
-int main()
+void TEST_GLOBAL_validatePassword()
+{
+    if (GLOBAL_validatePassword("Valid1@Password"))
+    {
+        printf("TEST_GLOBAL_validatePassword: PASSED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_validatePassword: FAILED\n");
+    }
+
+    if (GLOBAL_validatePassword("invalidpassword"))
+    {
+        printf("TEST_GLOBAL_validatePassword: FAILED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_validatePassword: PASSED\n");
+    }
+}
+
+void TEST_GLOBAL_validateEmail()
+{
+    if (GLOBAL_validateEmail("email@gmail.com"))
+    {
+        printf("TEST_GLOBAL_validateEmail: PASSED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_validateEmail: FAILED\n");
+    }
+    
+    if (GLOBAL_validateEmail("invalid-email"))
+    {
+        printf("TEST_GLOBAL_validateEmail: FAILED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_validateEmail: PASSED\n");
+    }
+}
+
+void TEST_GLOBAL_main()
 {
     TEST_GLOBAL_printLineInFile();
-    return 0;
+    TEST_GLOBAL_validatePassword();
+    TEST_GLOBAL_validateEmail();
 }
