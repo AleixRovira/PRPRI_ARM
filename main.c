@@ -1,4 +1,5 @@
 #include "lib/shop.h"
+#include "lib/staff.h"
 #include <stdio.h>
 
 void menu()
@@ -20,16 +21,16 @@ void menu()
         switch (option)
         {
         case 1:
-            printf("\nShop Register:\n");
+            printf("\nSHOP REGISTER\n");
             SHOP_register();
             break;
         case 2:
-            printf("\nYou selected User Register.\n");
+            printf("\nUSER REGISTER\n");
             // Call function for user register here
             break;
         case 3:
-            printf("\nYou selected Staff Access.\n");
-            // Call function for staff access here
+            printf("\nSTAFF REGISTER\n");
+            STAFF_register();
             break;
         case 4:
             printf("\nYou selected Client Login.\n");

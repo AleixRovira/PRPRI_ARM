@@ -1,0 +1,19 @@
+#ifndef _STAFF_H_
+#define _STAFF_H_
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "global.h"
+
+typedef struct
+{
+    char *name;
+    char *email;
+    char *password;
+    char *shop_code;
+} Staff;
+
+void STAFF_register();
+
+#endif
