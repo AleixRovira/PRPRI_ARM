@@ -55,24 +55,35 @@ void SHOP_register()
     printf("\tEnter shop phone: ");
     scanf("%ms", &shop.phone);
 
-    printf("\tEnter shop email: ");
-    scanf("%ms", &shop.email);
+    do
+    {
+        printf("\tEnter shop email: ");
+        scanf("%ms", &shop.email);
+        if (!GLOBAL_validateEmail(shop.email))
+        {
+            printf("\nERROR: Invalid email. Please enter a valid email.\n");
+            free(shop.email);
+            shop.email = NULL;
+        }
+    } while (shop.email == NULL);
 
-    do {
+    do
+    {
         printf("\tEnter shop latitude (-90.0 to 90.0): ");
         scanf("%f", &shop.latitude);
         if (shop.latitude < -90.0f || shop.latitude > 90.0f)
         {
-            printf("\nERROR: Latitude must be between -90.0 and 90.0.\n");
+            printf("\nERROR: Latitude must be between -90.0 and 90.0. Please enter a valid latitude.\n");
         }
     } while (shop.latitude < -90.0f || shop.latitude > 90.0f);
 
-    do {
+    do
+    {
         printf("\tEnter shop longitude (-180.0 to 180.0): ");
         scanf("%f", &shop.longitude);
         if (shop.longitude < -180.0f || shop.longitude > 180.0f)
         {
-            printf("\nERROR: Longitude must be between -180.0 and 180.0.\n");
+            printf("\nERROR: Longitude must be between -180.0 and 180.0. Please enter a valid longitude.\n");
         }
     } while (shop.longitude < -180.0f || shop.longitude > 180.0f);
 
@@ -80,7 +91,7 @@ void SHOP_register()
     asprintf(&buffer, "%s;%s;%s;%s;%s;%.6f;%.6f", shop.code, shop.name, shop.address, shop.phone, shop.email, shop.latitude, shop.longitude);
     GLOBAL_printLineInFile("files/shops.txt", buffer);
     free(buffer);
-    
+
     free(shop.code);
     free(shop.name);
     free(shop.address);
