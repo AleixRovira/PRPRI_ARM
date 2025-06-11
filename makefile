@@ -10,11 +10,14 @@ operations.o: module/operations.c
 shop.o: module/shop.c
 	gcc -c module/shop.c -ggdb
 
-main.o: main.c shop.o
+staff.o: module/staff.c
+	gcc -c module/staff.c -ggdb
+
+main.o: main.c shop.o staff.o
 	gcc -c main.c -ggdb
 
-prod: main.o shop.o operations.o global.o
-	gcc main.o shop.o operations.o global.o -o prpr.exe -ggdb -lm
+prod: main.o shop.o staff.o operations.o global.o
+	gcc main.o shop.o staff.o operations.o global.o -o prpr.exe -ggdb -lm
 	rm *.o
 
 #TDD
