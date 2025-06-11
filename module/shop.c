@@ -2,6 +2,24 @@
 
 #include "../lib/shop.h"
 
+void SHOP_freeShop(Shop *shop)
+{
+    free(shop->code);
+    free(shop->name);
+    free(shop->address);
+    free(shop->phone);
+    free(shop->email);
+
+    // Opcional: poner los punteros a NULL para evitar dobles free
+    shop->code = NULL;
+    shop->name = NULL;
+    shop->address = NULL;
+    shop->phone = NULL;
+    shop->email = NULL;
+    shop->latitude = 0.0f;
+    shop->longitude = 0.0f;
+}
+
 Shop SHOP_findShopByCode(char *code)
 {
     FILE *file = fopen("files/shops.txt", "r");
@@ -18,11 +36,7 @@ Shop SHOP_findShopByCode(char *code)
             fclose(file);
             return shop;
         }
-        free(shop.name);
-        free(shop.address);
-        free(shop.phone);
-        free(shop.email);
-        free(shop.code);
+        SHOP_freeShop(&shop);
     }
 
     fclose(file);
@@ -34,17 +48,22 @@ void SHOP_register()
     Shop shop;
 
     Shop aux;
+    int found;
     do
     {
         printf("\tEnter shop code: ");
         scanf("%ms", &shop.code);
         aux = SHOP_findShopByCode(shop.code);
+        found = 0;
         if (aux.name != NULL)
         {
             printf("\nERROR: Shop code already exists. Please enter a different code.\n");
             free(shop.code);
+            shop.code = NULL;
+            SHOP_freeShop(&aux);
+            found = 1;
         }
-    } while (aux.name != NULL);
+    } while (found);
 
     printf("\tEnter shop name: ");
     scanf("%ms", &shop.name);
@@ -92,11 +111,7 @@ void SHOP_register()
     GLOBAL_printLineInFile("files/shops.txt", buffer);
     free(buffer);
 
-    free(shop.code);
-    free(shop.name);
-    free(shop.address);
-    free(shop.phone);
-    free(shop.email);
+    SHOP_freeShop(&shop);
 
     printf("\nShop registered successfully!\n");
 }

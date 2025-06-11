@@ -1,4 +1,43 @@
+#define _GNU_SOURCE
+
 #include "../lib/staff.h"
+
+void STAFF_freeStaff(Staff *staff)
+{
+    free(staff->name);
+    free(staff->email);
+    free(staff->password);
+    free(staff->shop_code);
+
+    // Optional: set pointers to NULL to avoid double free
+    staff->name = NULL;
+    staff->email = NULL;
+    staff->password = NULL;
+    staff->shop_code = NULL;
+}
+
+Staff STAFF_findStaffByEmail(char *email)
+{
+    FILE *file = fopen("files/staff.txt", "r");
+    if (!file)
+    {
+        return (Staff){NULL, NULL, NULL, NULL};
+    }
+
+    Staff staff = {NULL, NULL, NULL, NULL};
+    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;]", &staff.name, &staff.email, &staff.password, &staff.shop_code) == 4)
+    {
+        if (strcmp(staff.email, email) == 0)
+        {
+            fclose(file);
+            return staff;
+        }
+        STAFF_freeStaff(&staff);
+    }
+
+    fclose(file);
+    return (Staff){NULL, NULL, NULL, NULL};
+}
 
 void STAFF_register()
 {
@@ -7,6 +46,8 @@ void STAFF_register()
     printf("\tEnter staff name: ");
     scanf("%ms", &staff.name);
 
+    Staff aux;
+    int found;
     do
     {
         printf("\tEnter staff email: ");
@@ -17,7 +58,18 @@ void STAFF_register()
             free(staff.email);
             staff.email = NULL;
         }
-    }while(staff.email == NULL);
+
+        aux = STAFF_findStaffByEmail(staff.email);
+        found = 0;
+        if(aux.name != NULL)
+        {
+            printf("\nERROR: Email already exists. Please enter a different email.\n");
+            free(staff.email);
+            staff.email = NULL;
+            STAFF_freeStaff(&aux);
+            found = 1;
+        }
+    } while (staff.email == NULL || found);
 
     do
     {
@@ -44,18 +96,14 @@ void STAFF_register()
             staff.shop_code = NULL;
         }
     } while (staff.shop_code == NULL);
-    free(shop.name);
-    free(shop.address);
-    free(shop.phone);
-    free(shop.email);
-    free(shop.code);
+    SHOP_freeShop(&shop);
 
-    //Guardar en el fichero
+    char *buffer = NULL;
+    asprintf(&buffer, "%s;%s;%s;%s", staff.name, staff.email, staff.password, staff.shop_code);
+    GLOBAL_printLineInFile("files/staff.txt", buffer);
+    free(buffer);
 
-    free(staff.name);
-    free(staff.email);
-    free(staff.password);
-    free(staff.shop_code);
+    STAFF_freeStaff(&staff);
 
     printf("\nStaff registered successfully:\n");
 }
