@@ -11,6 +11,7 @@ void CLIENT_freeClient(Client *client) {
     client->email = NULL;
     client->password = NULL;
     client->card_number = NULL;
+    client->card_pin = 0;
     client->balance = 0.0f;
 }
 
@@ -29,6 +30,9 @@ void CLIENT_register() {
 
     printf("\tEnter client card number: ");
     scanf("%ms", &client.card_number);
+
+    printf("\tEnter client card PIN: ");
+    scanf("%d", &client.card_pin);
 
     printf("\tEnter client balance: ");
     scanf("%f", &client.balance);

@@ -8,6 +8,7 @@ typedef struct {
     char *email;
     char *password;
     char *card_number;
+    int card_pin;
     float balance;
 } Client;
 
