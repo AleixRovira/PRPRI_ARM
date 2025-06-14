@@ -152,6 +152,7 @@ void STAFF_login() {
 
         if (staff.name == NULL) {
             printf("\nERROR: Invalid email or password. Please try again.\n");
+            STAFF_freeStaff(&staff);
         } else if (strcmp(staff.password, password) != 0) {
             printf("\nERROR: Invalid email or password. Please try again.\n");
             STAFF_freeStaff(&staff);

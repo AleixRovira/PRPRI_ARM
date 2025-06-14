@@ -132,6 +132,7 @@ void CLIENT_login() {
 
         if (client.name == NULL) {
             printf("\nERROR: Invalid email or password. Please try again.\n");
+            CLIENT_freeClient(&client);
         } else if (strcmp(client.password, password) != 0) {
             printf("\nERROR: Invalid email or password. Please try again.\n");
             CLIENT_freeClient(&client);
