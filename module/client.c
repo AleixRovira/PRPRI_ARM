@@ -72,8 +72,17 @@ void CLIENT_register()
         }
     } while (client.email == NULL || found);
 
-    printf("\tEnter client password: ");
-    scanf("%ms", &client.password);
+    do {
+        printf("\tEnter client password: ");
+        scanf("%ms", &client.password);
+
+        // Validar formato de la contraseña
+        if (!GLOBAL_validatePassword(client.password)) {
+            printf("\nERROR: Invalid password.\nPassword must be:\n- At least 8 characters long.\n- Contain at least one uppercase letter.\n- Contain at least one lowercase letter.\n- Contain at least one special character.\n");
+            free(client.password);
+            client.password = NULL;
+        }
+    } while (client.password == NULL);
 
     printf("\tEnter client card number: ");
     scanf("%ms", &client.card_number);
