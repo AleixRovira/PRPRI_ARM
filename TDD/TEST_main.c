@@ -8,7 +8,7 @@ void TEST_CLIENT_main();
 
 int main()
 {
-    printf("Running tests...\n");
+    printf("Running tests...\n\n");
     
     TEST_OP_main();
     TEST_SHOP_main();
@@ -16,7 +16,7 @@ int main()
     TEST_GLOBAL_main();
     TEST_CLIENT_main();
 
-    printf("All tests completed.\n");
+    printf("\nAll tests completed.\n");
     
     return 0;
 }

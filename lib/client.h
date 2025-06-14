@@ -13,6 +13,7 @@ typedef struct {
 } Client;
 
 void CLIENT_freeClient(Client *client);
+
 void CLIENT_register();
 
 #endif

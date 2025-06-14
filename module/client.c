@@ -1,6 +1,7 @@
 #include "../lib/client.h"
 
-void CLIENT_freeClient(Client *client) {
+void CLIENT_freeClient(Client *client)
+{
     free(client->name);
     free(client->email);
     free(client->password);
@@ -15,15 +16,61 @@ void CLIENT_freeClient(Client *client) {
     client->balance = 0.0f;
 }
 
-void CLIENT_register() {
+Client CLIENT_findClientByEmail(char *email)
+{
+    FILE *file = fopen("files/clients.txt", "r");
+    if (!file)
+    {
+        return (Client){NULL, NULL, NULL, NULL, 0, 0.0f};
+    }
+
+    Client client = {NULL, NULL, NULL, NULL, 0, 0.0f};
+    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%d;%f", &client.name, &client.email, &client.password, &client.card_number, &client.card_pin, &client.balance) == 6)
+    {
+        if (strcmp(client.email, email) == 0)
+        {
+            fclose(file);
+            return client;
+        }
+        CLIENT_freeClient(&client);
+    }
+
+    fclose(file);
+    return (Client){NULL, NULL, NULL, NULL, 0, 0.0f};
+}
+
+void CLIENT_register()
+{
 
     Client client;
 
     printf("\tEnter client name: ");
     scanf("%ms", &client.name);
 
-    printf("\tEnter client email: ");
-    scanf("%ms", &client.email);
+    Client aux;
+    int found;
+    do {
+        printf("\tEnter client email: ");
+        scanf("%ms", &client.email);
+
+        // Validar formato del email
+        if (!GLOBAL_validateEmail(client.email)) {
+            printf("\nERROR: Invalid email. Please enter a valid email.\n");
+            free(client.email);
+            client.email = NULL;
+        }
+
+        // Verificar si el email ya existe
+        aux = CLIENT_findClientByEmail(client.email);
+        found = 0;
+        if (aux.name != NULL) {
+            printf("\nERROR: Email already exists. Please enter a different email.\n");
+            free(client.email);
+            client.email = NULL;
+            CLIENT_freeClient(&aux);
+            found = 1;
+        }
+    } while (client.email == NULL || found);
 
     printf("\tEnter client password: ");
     scanf("%ms", &client.password);
