@@ -114,3 +114,38 @@ void CLIENT_register()
     CLIENT_freeClient(&client);
     printf("\nClient registered successfully!\n");
 }
+
+void CLIENT_login() {
+    char *email = NULL;
+    char *password = NULL;
+    Client client;
+    int found = 0;
+
+    do {
+        printf("\tEnter client email: ");
+        scanf("%ms", &email);
+
+        printf("\tEnter client password: ");
+        scanf("%ms", &password);
+
+        client = CLIENT_findClientByEmail(email);
+
+        if (client.name == NULL) {
+            printf("\nERROR: Invalid email or password. Please try again.\n");
+        } else if (strcmp(client.password, password) != 0) {
+            printf("\nERROR: Invalid email or password. Please try again.\n");
+            CLIENT_freeClient(&client);
+        } else {
+            found = 1;
+            printf("\nLogin successful! Welcome, %s.\n", client.name);
+        }
+
+        free(email);
+        free(password);
+        email = NULL;
+        password = NULL;
+
+    } while (!found);
+
+    CLIENT_freeClient(&client);
+}

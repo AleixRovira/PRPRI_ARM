@@ -127,7 +127,7 @@ void STAFF_menu()
             printf("\nAction 2\n");
             break;
         case 3:
-            printf("\nLoging out\n\n");
+            printf("\nLogging out\n\n");
             break;
         default:
             printf("\nERROR: Invalid option.\n");

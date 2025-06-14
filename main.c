@@ -10,7 +10,7 @@ void menu()
     printf("------------------------\n\n");
 
     int option = 0;
-    while (option != 5)
+    while (option != 6)
     {
         printf("\t1. Shop Register\n");
         printf("\t2. User Register\n");
@@ -39,8 +39,8 @@ void menu()
             STAFF_login();
             break;
         case 5:
-            printf("\nYou selected Client Login.\n");
-            // Call function for client login here
+            printf("\nCLIENT LOGIN\n");
+            CLIENT_login();
             break;
         case 6:
             printf("\nTank you. Exiting the program.\n");
