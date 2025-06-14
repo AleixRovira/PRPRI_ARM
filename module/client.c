@@ -115,6 +115,33 @@ void CLIENT_register()
     printf("\nClient registered successfully!\n");
 }
 
+void CLIENT_menu()
+{
+    int option = 0;
+    while (option != 3)
+    {
+        printf("\t1. Action 1\n");
+        printf("\t2. Action 2\n");
+        printf("\t3. Logout\n");
+        printf("Option: ");
+        scanf("%d", &option);
+        switch (option)
+        {
+        case 1:
+            printf("\nAction 1\n");
+            break;
+        case 2:
+            printf("\nAction 2\n");
+            break;
+        case 3:
+            printf("\nLogging out\n\n");
+            break;
+        default:
+            printf("\nERROR: Invalid option.\n");
+        }
+    }
+}
+
 void CLIENT_login() {
     char *email = NULL;
     char *password = NULL;
@@ -149,4 +176,6 @@ void CLIENT_login() {
     } while (!found);
 
     CLIENT_freeClient(&client);
+
+    CLIENT_menu();
 }
