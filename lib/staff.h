@@ -18,6 +18,7 @@ typedef struct
 void STAFF_freeStaff(Staff *staff);
 Staff STAFF_findStaffByEmail(char *email);
 void STAFF_register();
+void STAFF_menu();
 void STAFF_login();
 
 #endif
