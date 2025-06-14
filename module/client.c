@@ -53,14 +53,12 @@ void CLIENT_register()
         printf("\tEnter client email: ");
         scanf("%ms", &client.email);
 
-        // Validar formato del email
         if (!GLOBAL_validateEmail(client.email)) {
             printf("\nERROR: Invalid email. Please enter a valid email.\n");
             free(client.email);
             client.email = NULL;
         }
 
-        // Verificar si el email ya existe
         aux = CLIENT_findClientByEmail(client.email);
         found = 0;
         if (aux.name != NULL) {
@@ -76,7 +74,6 @@ void CLIENT_register()
         printf("\tEnter client password: ");
         scanf("%ms", &client.password);
 
-        // Validar formato de la contraseña
         if (!GLOBAL_validatePassword(client.password)) {
             printf("\nERROR: Invalid password.\nPassword must be:\n- At least 8 characters long.\n- Contain at least one uppercase letter.\n- Contain at least one lowercase letter.\n- Contain at least one special character.\n");
             free(client.password);
@@ -87,11 +84,25 @@ void CLIENT_register()
     printf("\tEnter client card number: ");
     scanf("%ms", &client.card_number);
 
-    printf("\tEnter client card PIN: ");
-    scanf("%d", &client.card_pin);
+    do {
+        printf("\tEnter client PIN (4 digits): ");
+        scanf("%d", &client.card_pin);
 
-    printf("\tEnter client balance: ");
-    scanf("%f", &client.balance);
+        if (client.card_pin < 1000 || client.card_pin > 9999) {
+            printf("\nERROR: Invalid PIN. Please enter a 4-digit PIN.\n");
+            client.card_pin = 0;
+        }
+    } while (client.card_pin == 0);
+
+    do {
+        printf("\tEnter client balance (€): ");
+        scanf("%f", &client.balance);
+
+        if (client.balance < 0) {
+            printf("\nERROR: Invalid balance. Balance must be 0 or positive.\n");
+            client.balance = -1.0f;
+        }
+    } while (client.balance < 0);
 
     CLIENT_freeClient(&client);
     printf("\nClient registered successfully!\n");
