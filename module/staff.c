@@ -107,3 +107,38 @@ void STAFF_register()
 
     printf("\nStaff registered successfully:\n");
 }
+
+void STAFF_login() {
+    char *email = NULL;
+    char *password = NULL;
+    Staff staff;
+    int found = 0;
+
+    do {
+        printf("\tEmail: ");
+        scanf("%ms", &email);
+
+        printf("\tPassword: ");
+        scanf("%ms", &password);
+
+        staff = STAFF_findStaffByEmail(email);
+
+        if (staff.name == NULL) {
+            printf("\nERROR: Invalid email or password. Please try again.\n");
+        } else if (strcmp(staff.password, password) != 0) {
+            printf("\nERROR: Invalid email or password. Please try again.\n");
+            STAFF_freeStaff(&staff);
+        } else {
+            found = 1;
+            printf("\nLogin successful! Welcome, %s.\n", staff.name);
+        }
+
+        free(email);
+        free(password);
+        email = NULL;
+        password = NULL;
+
+    } while (!found);
+
+    STAFF_freeStaff(&staff);
+}
