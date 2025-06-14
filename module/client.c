@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include "../lib/client.h"
 
 void CLIENT_freeClient(Client *client)
@@ -103,6 +105,11 @@ void CLIENT_register()
             client.balance = -1.0f;
         }
     } while (client.balance < 0);
+
+    char *buffer = NULL;
+    asprintf(&buffer, "%s;%s;%s;%s;%d;%.2f", client.name, client.email, client.password, client.card_number, client.card_pin, client.balance);
+    GLOBAL_printLineInFile("files/clients.txt", buffer);
+    free(buffer);
 
     CLIENT_freeClient(&client);
     printf("\nClient registered successfully!\n");
