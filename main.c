@@ -10,13 +10,14 @@ void menu()
     printf("------------------------\n\n");
 
     int option = 0;
-    while (option != 5)
+    while (option != 6)
     {
         printf("\t1. Shop Register\n");
         printf("\t2. User Register\n");
-        printf("\t3. Staff Access\n");
-        printf("\t4. Client Login\n");
-        printf("\t5. Exit\n");
+        printf("\t3. Staff Register\n");
+        printf("\t4. Staff Access\n");
+        printf("\t5. Client Login\n");
+        printf("\t6. Exit\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -34,11 +35,15 @@ void menu()
             STAFF_register();
             break;
         case 4:
-            printf("\nYou selected Client Login.\n");
-            // Call function for client login here
+            printf("\nSTAFF ACCESS\n");
+            STAFF_login();
             break;
         case 5:
-            printf("\nTank you. Exiting the program.\n");
+            printf("\nCLIENT LOGIN\n");
+            CLIENT_login();
+            break;
+        case 6:
+            printf("\nThank you. Exiting the program.\n");
             break;
         default:
             printf("\nERROR: Invalid option.\n");

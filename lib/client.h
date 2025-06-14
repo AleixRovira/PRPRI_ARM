@@ -13,7 +13,10 @@ typedef struct {
 } Client;
 
 void CLIENT_freeClient(Client *client);
-
+Client CLIENT_findClientByEmail(char *email);
 void CLIENT_register();
+void CLIENT_menu();
+void CLIENT_login();
+
 
 #endif

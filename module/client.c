@@ -114,3 +114,68 @@ void CLIENT_register()
     CLIENT_freeClient(&client);
     printf("\nClient registered successfully!\n");
 }
+
+void CLIENT_menu()
+{
+    int option = 0;
+    while (option != 3)
+    {
+        printf("\t1. Action 1\n");
+        printf("\t2. Action 2\n");
+        printf("\t3. Logout\n");
+        printf("Option: ");
+        scanf("%d", &option);
+        switch (option)
+        {
+        case 1:
+            printf("\nAction 1\n");
+            break;
+        case 2:
+            printf("\nAction 2\n");
+            break;
+        case 3:
+            printf("\nLogging out\n\n");
+            break;
+        default:
+            printf("\nERROR: Invalid option.\n");
+        }
+    }
+}
+
+void CLIENT_login() {
+    char *email = NULL;
+    char *password = NULL;
+    Client client;
+    int found = 0;
+
+    do {
+        printf("\tEnter client email: ");
+        scanf("%ms", &email);
+
+        printf("\tEnter client password: ");
+        scanf("%ms", &password);
+
+        client = CLIENT_findClientByEmail(email);
+
+        if (client.name == NULL) {
+            printf("\nERROR: Invalid email or password. Please try again.\n");
+            CLIENT_freeClient(&client);
+        } else if (strcmp(client.password, password) != 0) {
+            printf("\nERROR: Invalid email or password. Please try again.\n");
+            CLIENT_freeClient(&client);
+        } else {
+            found = 1;
+            printf("\nLogin successful! Welcome, %s.\n", client.name);
+        }
+
+        free(email);
+        free(password);
+        email = NULL;
+        password = NULL;
+
+    } while (!found);
+
+    CLIENT_freeClient(&client);
+
+    CLIENT_menu();
+}
