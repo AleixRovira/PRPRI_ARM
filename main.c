@@ -43,7 +43,7 @@ void menu()
             CLIENT_login();
             break;
         case 6:
-            printf("\nTank you. Exiting the program.\n");
+            printf("\nThank you. Exiting the program.\n");
             break;
         default:
             printf("\nERROR: Invalid option.\n");
