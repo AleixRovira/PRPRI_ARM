@@ -1,5 +1,6 @@
 #include "lib/shop.h"
 #include "lib/staff.h"
+#include "lib/client.h"
 #include <stdio.h>
 
 void menu()
@@ -26,7 +27,7 @@ void menu()
             break;
         case 2:
             printf("\nUSER REGISTER\n");
-            // Call function for user register here
+            CLIENT_register();
             break;
         case 3:
             printf("\nSTAFF REGISTER\n");
