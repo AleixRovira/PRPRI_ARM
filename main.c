@@ -14,9 +14,10 @@ void menu()
     {
         printf("\t1. Shop Register\n");
         printf("\t2. User Register\n");
-        printf("\t3. Staff Access\n");
-        printf("\t4. Client Login\n");
-        printf("\t5. Exit\n");
+        printf("\t3. Staff Register\n");
+        printf("\t4. Staff Access\n");
+        printf("\t5. Client Login\n");
+        printf("\t6. Exit\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -34,10 +35,14 @@ void menu()
             STAFF_register();
             break;
         case 4:
+            printf("\nSTAFF ACCESS\n");
+            STAFF_login();
+            break;
+        case 5:
             printf("\nYou selected Client Login.\n");
             // Call function for client login here
             break;
-        case 5:
+        case 6:
             printf("\nTank you. Exiting the program.\n");
             break;
         default:
