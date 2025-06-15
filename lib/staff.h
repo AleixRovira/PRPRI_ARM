@@ -26,9 +26,11 @@ typedef struct
 } Product;
 
 void STAFF_freeStaff(Staff *staff);
+void PRODUCT_freeProduct(Product *product);
 Staff STAFF_findStaffByEmail(char *email);
 void STAFF_register();
-void STAFF_addProduct(Staff staff);
+Product PRODUCT_findProductByName(char *name, char *shop_code);
+void PRODUCT_addProduct(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 
