@@ -15,10 +15,21 @@ typedef struct
     char *shop_code;
 } Staff;
 
+typedef struct
+{
+    char *name;
+    char *category;
+    float price;
+    int quantity;
+    char *description;
+    char *shop_code;
+} Product;
+
 void STAFF_freeStaff(Staff *staff);
 Staff STAFF_findStaffByEmail(char *email);
 void STAFF_register();
-void STAFF_menu();
+void STAFF_addProduct(Staff staff);
+void STAFF_menu(Staff staff);
 void STAFF_login();
 
 #endif
