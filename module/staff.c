@@ -357,7 +357,7 @@ void STAFF_updateShop(Staff staff)
 
     printf("\tCurrent shop address: %s\n", shop.address);
     printf("\tEnter new shop address: ");
-    scanf("%ms", &aux.address);
+    scanf(" %m[^\n]", &aux.address);
 
     printf("\tCurrent shop phone: %s\n", shop.phone);
     printf("\tEnter new shop phone: ");
