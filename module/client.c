@@ -115,12 +115,38 @@ void CLIENT_register()
     printf("\nClient registered successfully!\n");
 }
 
+void CLIENT_findNearShops()
+{
+    float latitude, longitude;
+
+    do
+    {
+        printf("\tEnter your latitude (-90.0 to 90.0): ");
+        scanf("%f", &latitude);
+        if (latitude < -90.0f || latitude > 90.0f)
+        {
+            printf("\nERROR: Latitude must be between -90.0 and 90.0. Please enter a valid latitude.\n");
+        }
+    } while (latitude < -90.0f || latitude > 90.0f);
+    
+
+    do
+    {
+        printf("\tEnter your longitude (-180.0 to 180.0): ");
+        scanf("%f", &longitude);
+        if (longitude < -180.0f || longitude > 180.0f)
+        {
+            printf("\nERROR: Longitude must be between -180.0 and 180.0. Please enter a valid longitude.\n");
+        }
+    } while (longitude < -180.0f || longitude > 180.0f);
+}
+
 void CLIENT_menu()
 {
     int option = 0;
     while (option != 3)
     {
-        printf("\t1. Action 1\n");
+        printf("\t1. Find near shops\n");
         printf("\t2. Action 2\n");
         printf("\t3. Logout\n");
         printf("Option: ");
@@ -128,7 +154,8 @@ void CLIENT_menu()
         switch (option)
         {
         case 1:
-            printf("\nAction 1\n");
+            printf("\nFIND NEAR SHOPS\n");
+            CLIENT_findNearShops();
             break;
         case 2:
             printf("\nAction 2\n");
