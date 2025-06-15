@@ -77,7 +77,7 @@ void STAFF_register()
 
         aux = STAFF_findStaffByEmail(staff.email);
         found = 0;
-        if(aux.name != NULL)
+        if (aux.name != NULL)
         {
             printf("\nERROR: Email already exists. Please enter a different email.\n");
             free(staff.email);
@@ -147,15 +147,16 @@ Product PRODUCT_findProductByName(char *name, char *shop_code)
     return (Product){NULL, NULL, 0.0f, 0, NULL, NULL};
 }
 
-void PRODUCT_addProduct(Staff staff)
+void STAFF_addProduct(Staff staff)
 {
     Product product;
 
     do
     {
         printf("\tEnter product name: ");
-        scanf("%ms", &product.name);
-        if (PRODUCT_findProductByName(product.name, staff.shop_code).name != NULL)
+        scanf(" %ms", &product.name);
+        product = PRODUCT_findProductByName(product.name, staff.shop_code);
+        if (product.name != NULL)
         {
             printf("\nERROR: Product name already exists. Please enter a different name.\n");
             free(product.name);
@@ -201,26 +202,236 @@ void PRODUCT_addProduct(Staff staff)
     printf("\nProduct added successfully!\n");
 }
 
+void STAFF_updateProductInFile(char *old_name, Product new_product)
+{
+    FILE *file = fopen("files/products.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open products file for updating.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_products.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for updating products.\n");
+        return;
+    }
+
+    Product product;
+    while (fscanf(file, "%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 6)
+    {
+        if (strcmp(product.name, old_name) == 0 && strcmp(product.shop_code, new_product.shop_code) == 0)
+        {
+            fprintf(aux, "%s;%s;%.2f;%d;%s;%s\n", new_product.name, new_product.category, new_product.price, new_product.quantity, new_product.description, new_product.shop_code);
+        }
+        else
+        {
+            fprintf(aux, "%s;%s;%.2f;%d;%s;%s\n", product.name, product.category, product.price, product.quantity, product.description, product.shop_code);
+        }
+        PRODUCT_freeProduct(&product);
+    }
+
+    fclose(file);
+    fclose(aux);
+
+    remove("files/products.txt");
+    rename("files/temp_products.txt", "files/products.txt");
+
+    printf("\nProduct updated successfully!\n");
+}
+
+void STAFF_updateProduct(Staff staff)
+{
+    Product product;
+
+    printf("\tEnter product name to update: ");
+    scanf("%ms", &product.name);
+    product = PRODUCT_findProductByName(product.name, staff.shop_code);
+    if (product.name == NULL)
+    {
+        printf("\nERROR: Product not found.\n");
+        free(product.name);
+        product.name = NULL;
+        return;
+    }
+
+    Product aux;
+    printf("\tCurrent product name: %s\n", product.name);
+    printf("\tEnter new product name: ");
+    scanf("%ms", &aux.name);
+
+    printf("\tCurrent product category: %s\n", product.category);
+    printf("\tEnter new product category: ");
+    scanf("%ms", &aux.category);
+
+    printf("\tCurrent product price: %.2f\n", product.price);
+    do
+    {
+        printf("\tEnter new product price (€): ");
+        scanf("%f", &aux.price);
+        if (aux.price < 0)
+        {
+            printf("\nERROR: Invalid price. Price must be 0 or positive.\n");
+        }
+    } while (aux.price < 0);
+
+    printf("\tCurrent product quantity: %d\n", product.quantity);
+    do
+    {
+        printf("\tEnter new product quantity: ");
+        scanf("%d", &aux.quantity);
+        if (aux.quantity < 0)
+        {
+            printf("\nERROR: Invalid quantity. Quantity must be 0 or positive.\n");
+        }
+    } while (aux.quantity < 0);
+
+    printf("\tCurrent product description: %s\n", product.description);
+    printf("\tEnter new product description: ");
+    scanf(" %m[^\n]", &aux.description);
+
+    aux.shop_code = strdup(product.shop_code);
+
+    STAFF_updateProductInFile(product.name, aux);
+
+    PRODUCT_freeProduct(&product);
+    PRODUCT_freeProduct(&aux);
+}
+
+void STAFF_updateShopInFile(Shop shop)
+{
+    FILE *file = fopen("files/shops.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open shops file for updating.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_shops.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for updating shops.\n");
+        return;
+    }
+
+    Shop current_shop;
+    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &current_shop.code, &current_shop.name, &current_shop.address, &current_shop.phone, &current_shop.email, &current_shop.latitude, &current_shop.longitude) == 7)
+    {
+        if (strcmp(current_shop.code, shop.code) == 0)
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s;%.2f;%.2f\n", shop.code, shop.name, shop.address, shop.phone, shop.email, shop.latitude, shop.longitude);
+        }
+        else
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s;%.2f;%.2f\n", current_shop.code, current_shop.name, current_shop.address, current_shop.phone, current_shop.email, current_shop.latitude, current_shop.longitude);
+        }
+        SHOP_freeShop(&current_shop);
+    }
+
+    fclose(file);
+    fclose(aux);
+
+    remove("files/shops.txt");
+    rename("files/temp_shops.txt", "files/shops.txt");
+
+    printf("\nShop updated successfully!\n");
+}
+
+void STAFF_updateShop(Staff staff)
+{
+    Shop shop = SHOP_findShopByCode(staff.shop_code);
+    if (shop.name == NULL)
+    {
+        printf("\nERROR: Shop not found.\n");
+        return;
+    }
+
+    Shop aux;
+
+    printf("\tCurrent shop name: %s\n", shop.name);
+    printf("\tEnter new shop name: ");
+    scanf("%ms", &aux.name);
+
+    printf("\tCurrent shop address: %s\n", shop.address);
+    printf("\tEnter new shop address: ");
+    scanf(" %m[^\n]", &aux.address);
+
+    printf("\tCurrent shop phone: %s\n", shop.phone);
+    printf("\tEnter new shop phone: ");
+    scanf("%ms", &aux.phone);
+
+    printf("\tCurrent shop email: %s\n", shop.email);
+    do
+    {
+        printf("\tEnter new shop email: ");
+        scanf("%ms", &aux.email);
+        if (!GLOBAL_validateEmail(aux.email))
+        {
+            printf("\nERROR: Invalid email. Please enter a valid email.\n");
+            free(aux.email);
+            aux.email = NULL;
+        }
+    } while (aux.email == NULL);
+
+    printf("\tCurrent shop latitude: %.2f\n", shop.latitude);
+    do
+    {
+        printf("\tEnter new shop latitude (-90.0 to 90.0): ");
+        scanf("%f", &aux.latitude);
+        if (aux.latitude < -90.0f || aux.latitude > 90.0f)
+        {
+            printf("\nERROR: Latitude must be between -90.0 and 90.0. Please enter a valid latitude.\n");
+        }
+    } while (aux.latitude < -90.0f || aux.latitude > 90.0f);
+
+    printf("\tCurrent shop longitude: %.2f\n", shop.longitude);
+    do
+    {
+        printf("\tEnter new shop longitude (-180.0 to 180.0): ");
+        scanf("%f", &aux.longitude);
+        if (aux.longitude < -180.0f || aux.longitude > 180.0f)
+        {
+            printf("\nERROR: Longitude must be between -180.0 and 180.0. Please enter a valid longitude.\n");
+        }
+    } while (aux.longitude < -180.0f || aux.longitude > 180.0f);
+
+    aux.code = strdup(shop.code);
+
+    STAFF_updateShopInFile(aux);
+
+    SHOP_freeShop(&shop);
+    SHOP_freeShop(&aux);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 3)
+    while (option != 4)
     {
         printf("\t1. Add Product\n");
-        printf("\t2. Action 2\n");
-        printf("\t3. Logout\n");
+        printf("\t2. Update Product\n");
+        printf("\t3. Update Shop\n");
+        printf("\t4. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
         {
         case 1:
             printf("\nADD PRODUCT\n");
-            PRODUCT_addProduct(staff);
+            STAFF_addProduct(staff);
             break;
         case 2:
-            printf("\nAction 2\n");
+            printf("\nUPDATE PRODUCT\n");
+            STAFF_updateProduct(staff);
             break;
         case 3:
+            printf("\nUPDATE SHOP\n");
+            STAFF_updateShop(staff);
+            break;
+        case 4:
             printf("\nLogging out\n\n");
             break;
         default:
@@ -230,13 +441,15 @@ void STAFF_menu(Staff staff)
     }
 }
 
-void STAFF_login() {
+void STAFF_login()
+{
     char *email = NULL;
     char *password = NULL;
     Staff staff;
     int found = 0;
 
-    do {
+    do
+    {
         printf("\tEmail: ");
         scanf("%ms", &email);
 
@@ -245,13 +458,18 @@ void STAFF_login() {
 
         staff = STAFF_findStaffByEmail(email);
 
-        if (staff.name == NULL) {
+        if (staff.name == NULL)
+        {
             printf("\nERROR: Invalid email or password. Please try again.\n");
             STAFF_freeStaff(&staff);
-        } else if (strcmp(staff.password, password) != 0) {
+        }
+        else if (strcmp(staff.password, password) != 0)
+        {
             printf("\nERROR: Invalid email or password. Please try again.\n");
             STAFF_freeStaff(&staff);
-        } else {
+        }
+        else
+        {
             found = 1;
             printf("\nLogin successful! Welcome, %s.\n", staff.name);
         }

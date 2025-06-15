@@ -30,7 +30,11 @@ void PRODUCT_freeProduct(Product *product);
 Staff STAFF_findStaffByEmail(char *email);
 void STAFF_register();
 Product PRODUCT_findProductByName(char *name, char *shop_code);
-void PRODUCT_addProduct(Staff staff);
+void STAFF_addProduct(Staff staff);
+void STAFF_updateProductInFile(char *old_name, Product new_product);
+void STAFF_updateProduct(Staff staff);
+void STAFF_updateShopInFile(Shop shop);
+void STAFF_updateShop(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 

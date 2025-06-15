@@ -1,4 +1,10 @@
-#all: prpr
+#Clean
+clean:
+	rm -f *.o
+
+clean_all:
+	rm -f *.o
+	rm -f *.exe
 
 #Final code
 global.o: module/global.c
@@ -19,7 +25,7 @@ client.o: module/client.c
 main.o: main.c shop.o staff.o
 	gcc -c main.c -ggdb
 
-prod: main.o shop.o staff.o client.o operations.o global.o
+prod: clean_all main.o shop.o staff.o client.o operations.o global.o
 	gcc main.o shop.o staff.o client.o operations.o global.o -o prpr.exe -ggdb -lm
 	rm *.o
 
@@ -42,14 +48,7 @@ TEST_global.o: TDD/TEST_global.c
 TEST_main.o: TDD/TEST_main.c
 	gcc -c TDD/TEST_main.c -ggdb
 
-test: TEST_main.o TEST_operations.o TEST_shop.o TEST_staff.o TEST_client.o TEST_global.o operations.o shop.o staff.o client.o global.o
+test: clean_all TEST_main.o TEST_operations.o TEST_shop.o TEST_staff.o TEST_client.o TEST_global.o operations.o shop.o staff.o client.o global.o
 	gcc TEST_main.o TEST_operations.o TEST_shop.o TEST_staff.o TEST_client.o TEST_global.o operations.o shop.o staff.o client.o global.o -o test.exe -ggdb -lm
 	rm *.o
 	
-#Clean
-clean:
-	rm -f *.o
-
-clean_all:
-	rm -f *.o
-	rm -f *.exe
