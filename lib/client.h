@@ -2,6 +2,8 @@
 #define _CLIENT_H
 
 #include "global.h"
+#include "shop.h"
+#include "operations.h"
 
 typedef struct {
     char *name;
@@ -15,6 +17,8 @@ typedef struct {
 void CLIENT_freeClient(Client *client);
 Client CLIENT_findClientByEmail(char *email);
 void CLIENT_register();
+Shop *CLIENT_getNearShops(float latitude, float longitude);
+void CLIENT_findNearShops();
 void CLIENT_menu();
 void CLIENT_login();
 
