@@ -202,6 +202,46 @@ void STAFF_addProduct(Staff staff)
     printf("\nProduct added successfully!\n");
 }
 
+void PRODUCT_updateProductInFile(char *old_name, Product new_product)
+{
+    FILE *file = fopen("files/products.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open products file for updating.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_products.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for updating products.\n");
+        return;
+    }
+
+    Product product;
+    while (fscanf(file, "%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 6)
+    {
+        if (strcmp(product.name, old_name) == 0 && strcmp(product.shop_code, new_product.shop_code) == 0)
+        {
+            fprintf(aux, "%s;%s;%.2f;%d;%s;%s\n", new_product.name, new_product.category, new_product.price, new_product.quantity, new_product.description, new_product.shop_code);
+        }
+        else
+        {
+            fprintf(aux, "%s;%s;%.2f;%d;%s;%s\n", product.name, product.category, product.price, product.quantity, product.description, product.shop_code);
+        }
+        PRODUCT_freeProduct(&product);
+    }
+
+    fclose(file);
+    fclose(aux);
+
+    remove("files/products.txt");
+    rename("files/temp_products.txt", "files/products.txt");
+
+    printf("\nProduct updated successfully!\n");
+}
+
 void STAFF_updateProduct(Staff staff)
 {
     Product product;
@@ -248,6 +288,8 @@ void STAFF_updateProduct(Staff staff)
     scanf(" %m[^\n]", &aux.description);
 
     aux.shop_code = strdup(product.shop_code);
+
+    PRODUCT_updateProductInFile(product.name, aux);
 
     PRODUCT_freeProduct(&product);
     PRODUCT_freeProduct(&aux);
