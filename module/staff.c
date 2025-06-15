@@ -118,11 +118,25 @@ void STAFF_addProduct(Staff staff)
     printf("\tEnter product category: ");
     scanf("%ms", &product.category);
 
-    printf("\tEnter product price (€): ");
-    scanf("%f", &product.price);
+    do
+    {
+        printf("\tEnter product price (€): ");
+        scanf("%f", &product.price);
+        if (product.price < 0)
+        {
+            printf("\nERROR: Invalid price. Price must be 0 or positive.\n");
+        }
+    } while (product.price < 0);
 
-    printf("\tEnter product quantity: ");
-    scanf("%d", &product.quantity);
+    do
+    {
+        printf("\tEnter product quantity: ");
+        scanf("%d", &product.quantity);
+        if (product.quantity < 0)
+        {
+            printf("\nERROR: Invalid quantity. Quantity must be 0 or positive.\n");
+        }
+    } while (product.quantity < 0);
 
     printf("\tEnter product description: ");
     scanf(" %m[^\n]", &product.description);
