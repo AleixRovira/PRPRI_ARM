@@ -69,7 +69,7 @@ void SHOP_register()
     scanf("%ms", &shop.name);
 
     printf("\tEnter shop address: ");
-    scanf("%ms", &shop.address);
+    scanf(" %m[^\n]", &shop.address);
 
     printf("\tEnter shop phone: ");
     scanf("%ms", &shop.phone);

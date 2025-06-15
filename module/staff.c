@@ -202,7 +202,7 @@ void STAFF_addProduct(Staff staff)
     printf("\nProduct added successfully!\n");
 }
 
-void PRODUCT_updateProductInFile(char *old_name, Product new_product)
+void STAFF_updateProductInFile(char *old_name, Product new_product)
 {
     FILE *file = fopen("files/products.txt", "r");
     if (!file)
@@ -294,10 +294,50 @@ void STAFF_updateProduct(Staff staff)
 
     aux.shop_code = strdup(product.shop_code);
 
-    PRODUCT_updateProductInFile(product.name, aux);
+    STAFF_updateProductInFile(product.name, aux);
 
     PRODUCT_freeProduct(&product);
     PRODUCT_freeProduct(&aux);
+}
+
+void STAFF_updateShopInFile(Shop shop)
+{
+    FILE *file = fopen("files/shops.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open shops file for updating.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_shops.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for updating shops.\n");
+        return;
+    }
+
+    Shop current_shop;
+    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &current_shop.code, &current_shop.name, &current_shop.address, &current_shop.phone, &current_shop.email, &current_shop.latitude, &current_shop.longitude) == 7)
+    {
+        if (strcmp(current_shop.code, shop.code) == 0)
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s;%.2f;%.2f\n", shop.code, shop.name, shop.address, shop.phone, shop.email, shop.latitude, shop.longitude);
+        }
+        else
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s;%.2f;%.2f\n", current_shop.code, current_shop.name, current_shop.address, current_shop.phone, current_shop.email, current_shop.latitude, current_shop.longitude);
+        }
+        SHOP_freeShop(&current_shop);
+    }
+
+    fclose(file);
+    fclose(aux);
+
+    remove("files/shops.txt");
+    rename("files/temp_shops.txt", "files/shops.txt");
+
+    printf("\nShop updated successfully!\n");
 }
 
 void STAFF_updateShop(Staff staff)
@@ -360,7 +400,7 @@ void STAFF_updateShop(Staff staff)
 
     aux.code = strdup(shop.code);
 
-    printf("\nShop updated successfully!\n");
+    STAFF_updateShopInFile(aux);
 
     SHOP_freeShop(&shop);
     SHOP_freeShop(&aux);
