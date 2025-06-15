@@ -36,6 +36,20 @@ void TEST_CLIENT_findClientByEmail() {
     }
 }
 
+void TEST_CLIENT_getNearShops() {
+    float latitude = 40.4168f;
+    float longitude = -3.7038f;
+
+    Shop *near_shops = CLIENT_getNearShops(latitude, longitude);
+    for(int i = 0; i < 5 &&near_shops[i].name != NULL; i++) {
+        printf("Shop %d: %s, Address: %s, Phone: %s, Email: %s, Coordinates: (%.2f, %.2f)\n",
+               i + 1, near_shops[i].name, near_shops[i].address, near_shops[i].phone,
+               near_shops[i].email, near_shops[i].latitude, near_shops[i].longitude);
+    }
+}
+
 void TEST_CLIENT_main() {
     TEST_CLIENT_freeClient();
+    TEST_CLIENT_findClientByEmail();
+    TEST_CLIENT_getNearShops();
 }
