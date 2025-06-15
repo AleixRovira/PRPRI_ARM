@@ -19,14 +19,14 @@ shop.o: module/shop.c global.o
 staff.o: module/staff.c shop.o global.o
 	gcc -c module/staff.c -ggdb
 
-client.o: module/client.c
+client.o: module/client.c shop.o global.o operations.o
 	gcc -c module/client.c -ggdb
 
 main.o: main.c shop.o staff.o
 	gcc -c main.c -ggdb
 
-prod: clean_all main.o shop.o staff.o client.o operations.o global.o
-	gcc main.o shop.o staff.o client.o operations.o global.o -o prpr.exe -ggdb -lm
+prod: clean_all main.o shop.o staff.o operations.o client.o global.o
+	gcc main.o shop.o staff.o operations.o client.o global.o -o prpr.exe -ggdb -lm
 	rm *.o
 
 #TDD
