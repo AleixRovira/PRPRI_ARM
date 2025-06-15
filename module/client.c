@@ -231,6 +231,23 @@ void CLIENT_findNearShops()
     } while (longitude < -180.0f || longitude > 180.0f);
 
     Shop *near_shops = CLIENT_getNearShops(latitude, longitude);
+
+    if (near_shops == NULL)
+    {
+        printf("\nERROR: No shops found near your location.\n");
+        return;
+    }
+
+    printf("\nNEAR SHOPS:\n");
+    for(int i = 0; i < 5 && near_shops[i].name != NULL; i++)
+    {
+        printf("\nShop %d:\n", i + 1);
+        printf("\tName: %s\n", near_shops[i].name);
+        printf("\tAddress: %s\n", near_shops[i].address);
+        printf("\tPhone: %s\n", near_shops[i].phone);
+        printf("\tEmail: %s\n", near_shops[i].email);
+        printf("\tCoordinates: (%.2f, %.2f)\n\n", near_shops[i].latitude, near_shops[i].longitude);
+    }
 }
 
 void CLIENT_menu()
