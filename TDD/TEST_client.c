@@ -21,18 +21,18 @@ void TEST_CLIENT_freeClient() {
 void TEST_CLIENT_findClientByEmail() {
     Client client = CLIENT_findClientByEmail("test@email.com");
     if (client.name == NULL) {
-        printf("TEST_CLIENT_findClientByEmail (nonexistent email): PASSED\n");
+        printf("TEST_CLIENT_findClientByEmail: PASSED\n");
     } else {
-        printf("TEST_CLIENT_findClientByEmail (nonexistent email): FAILED\n");
+        printf("TEST_CLIENT_findClientByEmail: FAILED\n");
         CLIENT_freeClient(&client);
     }
 
     client = CLIENT_findClientByEmail("email@gmail.com");
     if (client.name != NULL) {
-        printf("TEST_CLIENT_findClientByEmail (existing email): PASSED\n");
+        printf("TEST_CLIENT_findClientByEmail: PASSED\n");
         CLIENT_freeClient(&client);
     } else {
-        printf("TEST_CLIENT_findClientByEmail (existing email): FAILED\n");
+        printf("TEST_CLIENT_findClientByEmail: FAILED\n");
     }
 }
 

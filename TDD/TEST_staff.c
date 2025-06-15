@@ -32,8 +32,35 @@ void TEST_STAFF_findStaffByEmail() {
     }
 }
 
+void TEST_PRODUCT_findProductByName() {
+    Product product = PRODUCT_findProductByName("Test Product", "S001");
+    if (product.name == NULL) {
+        printf("TEST_PRODUCT_findProductByName: PASSED\n");
+    } else {
+        printf("TEST_PRODUCT_findProductByName: FAILED\n");
+        PRODUCT_freeProduct(&product);
+    }
+
+    product = PRODUCT_findProductByName("name", "S001");
+    if (product.name == NULL) {
+        printf("TEST_PRODUCT_findProductByName: PASSED\n");
+    } else {
+        printf("TEST_PRODUCT_findProductByName: FAILED\n");
+        PRODUCT_freeProduct(&product);
+    }
+
+    product = PRODUCT_findProductByName("name", "code");
+    if (product.name != NULL) {
+        printf("TEST_PRODUCT_findProductByName: PASSED\n");
+        PRODUCT_freeProduct(&product);
+    } else {
+        printf("TEST_PRODUCT_findProductByName: FAILED\n");
+    }
+}
+
 void TEST_STAFF_main() {
 
     TEST_STAFF_freeStaff();
     TEST_STAFF_findStaffByEmail();
+    TEST_PRODUCT_findProductByName();
 }

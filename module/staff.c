@@ -16,6 +16,22 @@ void STAFF_freeStaff(Staff *staff)
     staff->shop_code = NULL;
 }
 
+void PRODUCT_freeProduct(Product *product)
+{
+    free(product->name);
+    free(product->category);
+    free(product->description);
+    free(product->shop_code);
+
+    // Optional: set pointers to NULL to avoid double free
+    product->name = NULL;
+    product->category = NULL;
+    product->description = NULL;
+    product->shop_code = NULL;
+    product->price = 0.0f;
+    product->quantity = 0;
+}
+
 Staff STAFF_findStaffByEmail(char *email)
 {
     FILE *file = fopen("files/staff.txt", "r");
@@ -25,7 +41,7 @@ Staff STAFF_findStaffByEmail(char *email)
     }
 
     Staff staff = {NULL, NULL, NULL, NULL};
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;]", &staff.name, &staff.email, &staff.password, &staff.shop_code) == 4)
+    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%ms", &staff.name, &staff.email, &staff.password, &staff.shop_code) == 4)
     {
         if (strcmp(staff.email, email) == 0)
         {
@@ -105,15 +121,92 @@ void STAFF_register()
 
     STAFF_freeStaff(&staff);
 
-    printf("\nStaff registered successfully:\n");
+    printf("\nStaff registered successfully!\n");
 }
 
-void STAFF_menu()
+Product PRODUCT_findProductByName(char *name, char *shop_code)
+{
+    FILE *file = fopen("files/products.txt", "r");
+    if (!file)
+    {
+        return (Product){NULL, NULL, 0.0f, 0, NULL, NULL};
+    }
+
+    Product product = {NULL, NULL, 0.0f, 0, NULL, NULL};
+    while (fscanf(file, "%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 6)
+    {
+        if (strcmp(product.name, name) == 0 && strcmp(product.shop_code, shop_code) == 0)
+        {
+            fclose(file);
+            return product;
+        }
+        PRODUCT_freeProduct(&product);
+    }
+
+    fclose(file);
+    return (Product){NULL, NULL, 0.0f, 0, NULL, NULL};
+}
+
+void PRODUCT_addProduct(Staff staff)
+{
+    Product product;
+
+    do
+    {
+        printf("\tEnter product name: ");
+        scanf("%ms", &product.name);
+        if (PRODUCT_findProductByName(product.name, staff.shop_code).name != NULL)
+        {
+            printf("\nERROR: Product name already exists. Please enter a different name.\n");
+            free(product.name);
+            product.name = NULL;
+        }
+    } while (product.name == NULL);
+
+    printf("\tEnter product category: ");
+    scanf("%ms", &product.category);
+
+    do
+    {
+        printf("\tEnter product price (€): ");
+        scanf("%f", &product.price);
+        if (product.price < 0)
+        {
+            printf("\nERROR: Invalid price. Price must be 0 or positive.\n");
+        }
+    } while (product.price < 0);
+
+    do
+    {
+        printf("\tEnter product quantity: ");
+        scanf("%d", &product.quantity);
+        if (product.quantity < 0)
+        {
+            printf("\nERROR: Invalid quantity. Quantity must be 0 or positive.\n");
+        }
+    } while (product.quantity < 0);
+
+    printf("\tEnter product description: ");
+    scanf(" %m[^\n]", &product.description);
+
+    product.shop_code = strdup(staff.shop_code);
+
+    char *buffer = NULL;
+    asprintf(&buffer, "%s;%s;%.2f;%d;%s;%s", product.name, product.category, product.price, product.quantity, product.description, product.shop_code);
+    GLOBAL_printLineInFile("files/products.txt", buffer);
+    free(buffer);
+
+    PRODUCT_freeProduct(&product);
+
+    printf("\nProduct added successfully!\n");
+}
+
+void STAFF_menu(Staff staff)
 {
     int option = 0;
     while (option != 3)
     {
-        printf("\t1. Action 1\n");
+        printf("\t1. Add Product\n");
         printf("\t2. Action 2\n");
         printf("\t3. Logout\n");
         printf("Option: ");
@@ -121,7 +214,8 @@ void STAFF_menu()
         switch (option)
         {
         case 1:
-            printf("\nAction 1\n");
+            printf("\nADD PRODUCT\n");
+            PRODUCT_addProduct(staff);
             break;
         case 2:
             printf("\nAction 2\n");
@@ -131,6 +225,7 @@ void STAFF_menu()
             break;
         default:
             printf("\nERROR: Invalid option.\n");
+            break;
         }
     }
 }
@@ -168,7 +263,7 @@ void STAFF_login() {
 
     } while (!found);
 
-    STAFF_freeStaff(&staff);
+    STAFF_menu(staff);
 
-    STAFF_menu();
+    STAFF_freeStaff(&staff);
 }
