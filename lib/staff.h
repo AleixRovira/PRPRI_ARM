@@ -33,6 +33,7 @@ Product PRODUCT_findProductByName(char *name, char *shop_code);
 void STAFF_addProduct(Staff staff);
 void PRODUCT_updateProductInFile(char *old_name, Product new_product);
 void STAFF_updateProduct(Staff staff);
+void STAFF_updateShop(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 

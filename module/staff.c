@@ -258,12 +258,15 @@ void STAFF_updateProduct(Staff staff)
     }
 
     Product aux;
+    printf("\tCurrent product name: %s\n", product.name);
     printf("\tEnter new product name: ");
     scanf("%ms", &aux.name);
 
+    printf("\tCurrent product category: %s\n", product.category);
     printf("\tEnter new product category: ");
     scanf("%ms", &aux.category);
 
+    printf("\tCurrent product price: %.2f\n", product.price);
     do
     {
         printf("\tEnter new product price (€): ");
@@ -274,6 +277,7 @@ void STAFF_updateProduct(Staff staff)
         }
     } while (aux.price < 0);
 
+    printf("\tCurrent product quantity: %d\n", product.quantity);
     do
     {
         printf("\tEnter new product quantity: ");
@@ -284,6 +288,7 @@ void STAFF_updateProduct(Staff staff)
         }
     } while (aux.quantity < 0);
 
+    printf("\tCurrent product description: %s\n", product.description);
     printf("\tEnter new product description: ");
     scanf(" %m[^\n]", &aux.description);
 
@@ -293,6 +298,72 @@ void STAFF_updateProduct(Staff staff)
 
     PRODUCT_freeProduct(&product);
     PRODUCT_freeProduct(&aux);
+}
+
+void STAFF_updateShop(Staff staff)
+{
+    Shop shop = SHOP_findShopByCode(staff.shop_code);
+    if (shop.name == NULL)
+    {
+        printf("\nERROR: Shop not found.\n");
+        return;
+    }
+
+    Shop aux;
+
+    printf("\tCurrent shop name: %s\n", shop.name);
+    printf("\tEnter new shop name: ");
+    scanf("%ms", &aux.name);
+
+    printf("\tCurrent shop address: %s\n", shop.address);
+    printf("\tEnter new shop address: ");
+    scanf("%ms", &aux.address);
+
+    printf("\tCurrent shop phone: %s\n", shop.phone);
+    printf("\tEnter new shop phone: ");
+    scanf("%ms", &aux.phone);
+
+    printf("\tCurrent shop email: %s\n", shop.email);
+    do
+    {
+        printf("\tEnter new shop email: ");
+        scanf("%ms", &aux.email);
+        if (!GLOBAL_validateEmail(aux.email))
+        {
+            printf("\nERROR: Invalid email. Please enter a valid email.\n");
+            free(aux.email);
+            aux.email = NULL;
+        }
+    } while (aux.email == NULL);
+
+    printf("\tCurrent shop latitude: %.2f\n", shop.latitude);
+    do
+    {
+        printf("\tEnter new shop latitude (-90.0 to 90.0): ");
+        scanf("%f", &aux.latitude);
+        if (aux.latitude < -90.0f || aux.latitude > 90.0f)
+        {
+            printf("\nERROR: Latitude must be between -90.0 and 90.0. Please enter a valid latitude.\n");
+        }
+    } while (aux.latitude < -90.0f || aux.latitude > 90.0f);
+
+    printf("\tCurrent shop longitude: %.2f\n", shop.longitude);
+    do
+    {
+        printf("\tEnter new shop longitude (-180.0 to 180.0): ");
+        scanf("%f", &aux.longitude);
+        if (aux.longitude < -180.0f || aux.longitude > 180.0f)
+        {
+            printf("\nERROR: Longitude must be between -180.0 and 180.0. Please enter a valid longitude.\n");
+        }
+    } while (aux.longitude < -180.0f || aux.longitude > 180.0f);
+
+    aux.code = strdup(shop.code);
+
+    printf("\nShop updated successfully!\n");
+
+    SHOP_freeShop(&shop);
+    SHOP_freeShop(&aux);
 }
 
 void STAFF_menu(Staff staff)
@@ -318,7 +389,7 @@ void STAFF_menu(Staff staff)
             break;
         case 3:
             printf("\nUPDATE SHOP\n");
-            // Placeholder for shop update functionality
+            STAFF_updateShop(staff);
             break;
         case 4:
             printf("\nLogging out\n\n");
