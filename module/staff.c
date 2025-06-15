@@ -77,7 +77,7 @@ void STAFF_register()
 
         aux = STAFF_findStaffByEmail(staff.email);
         found = 0;
-        if(aux.name != NULL)
+        if (aux.name != NULL)
         {
             printf("\nERROR: Email already exists. Please enter a different email.\n");
             free(staff.email);
@@ -147,15 +147,16 @@ Product PRODUCT_findProductByName(char *name, char *shop_code)
     return (Product){NULL, NULL, 0.0f, 0, NULL, NULL};
 }
 
-void PRODUCT_addProduct(Staff staff)
+void STAFF_addProduct(Staff staff)
 {
     Product product;
 
     do
     {
         printf("\tEnter product name: ");
-        scanf("%ms", &product.name);
-        if (PRODUCT_findProductByName(product.name, staff.shop_code).name != NULL)
+        scanf(" %ms", &product.name);
+        product = PRODUCT_findProductByName(product.name, staff.shop_code);
+        if (product.name != NULL)
         {
             printf("\nERROR: Product name already exists. Please enter a different name.\n");
             free(product.name);
@@ -201,26 +202,83 @@ void PRODUCT_addProduct(Staff staff)
     printf("\nProduct added successfully!\n");
 }
 
+void STAFF_updateProduct(Staff staff)
+{
+    Product product;
+
+    printf("\tEnter product name to update: ");
+    scanf("%ms", &product.name);
+    product = PRODUCT_findProductByName(product.name, staff.shop_code);
+    if (product.name == NULL)
+    {
+        printf("\nERROR: Product not found.\n");
+        free(product.name);
+        product.name = NULL;
+        return;
+    }
+
+    Product aux;
+    printf("\tEnter new product name: ");
+    scanf("%ms", &aux.name);
+
+    printf("\tEnter new product category: ");
+    scanf("%ms", &aux.category);
+
+    do
+    {
+        printf("\tEnter new product price (€): ");
+        scanf("%f", &aux.price);
+        if (aux.price < 0)
+        {
+            printf("\nERROR: Invalid price. Price must be 0 or positive.\n");
+        }
+    } while (aux.price < 0);
+
+    do
+    {
+        printf("\tEnter new product quantity: ");
+        scanf("%d", &aux.quantity);
+        if (aux.quantity < 0)
+        {
+            printf("\nERROR: Invalid quantity. Quantity must be 0 or positive.\n");
+        }
+    } while (aux.quantity < 0);
+
+    printf("\tEnter new product description: ");
+    scanf(" %m[^\n]", &aux.description);
+
+    aux.shop_code = strdup(product.shop_code);
+
+    PRODUCT_freeProduct(&product);
+    PRODUCT_freeProduct(&aux);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 3)
+    while (option != 4)
     {
         printf("\t1. Add Product\n");
-        printf("\t2. Action 2\n");
-        printf("\t3. Logout\n");
+        printf("\t2. Update Product\n");
+        printf("\t3. Update Shop\n");
+        printf("\t4. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
         {
         case 1:
             printf("\nADD PRODUCT\n");
-            PRODUCT_addProduct(staff);
+            STAFF_addProduct(staff);
             break;
         case 2:
-            printf("\nAction 2\n");
+            printf("\nUPDATE PRODUCT\n");
+            STAFF_updateProduct(staff);
             break;
         case 3:
+            printf("\nUPDATE SHOP\n");
+            // Placeholder for shop update functionality
+            break;
+        case 4:
             printf("\nLogging out\n\n");
             break;
         default:
@@ -230,13 +288,15 @@ void STAFF_menu(Staff staff)
     }
 }
 
-void STAFF_login() {
+void STAFF_login()
+{
     char *email = NULL;
     char *password = NULL;
     Staff staff;
     int found = 0;
 
-    do {
+    do
+    {
         printf("\tEmail: ");
         scanf("%ms", &email);
 
@@ -245,13 +305,18 @@ void STAFF_login() {
 
         staff = STAFF_findStaffByEmail(email);
 
-        if (staff.name == NULL) {
+        if (staff.name == NULL)
+        {
             printf("\nERROR: Invalid email or password. Please try again.\n");
             STAFF_freeStaff(&staff);
-        } else if (strcmp(staff.password, password) != 0) {
+        }
+        else if (strcmp(staff.password, password) != 0)
+        {
             printf("\nERROR: Invalid email or password. Please try again.\n");
             STAFF_freeStaff(&staff);
-        } else {
+        }
+        else
+        {
             found = 1;
             printf("\nLogin successful! Welcome, %s.\n", staff.name);
         }
