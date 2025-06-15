@@ -108,12 +108,42 @@ void STAFF_register()
     printf("\nStaff registered successfully:\n");
 }
 
-void STAFF_menu()
+void STAFF_addProduct(Staff staff)
+{
+    Product product;
+
+    printf("\tEnter product name: ");
+    scanf("%ms", &product.name);
+
+    printf("\tEnter product category: ");
+    scanf("%ms", &product.category);
+
+    printf("\tEnter product price (€): ");
+    scanf("%f", &product.price);
+
+    printf("\tEnter product quantity: ");
+    scanf("%d", &product.quantity);
+
+    printf("\tEnter product description: ");
+    scanf(" %m[^\n]", &product.description);
+
+    product.shop_code = strdup(staff.shop_code);
+
+    printf("\nProduct added successfully:\n");
+    printf("\tName: %s\n", product.name);
+    printf("\tCategory: %s\n", product.category);
+    printf("\tPrice: %.2f\n", product.price);
+    printf("\tQuantity: %d\n", product.quantity);
+    printf("\tDescription: %s\n", product.description);
+    printf("\tShop Code: %s\n", product.shop_code);
+}
+
+void STAFF_menu(Staff staff)
 {
     int option = 0;
     while (option != 3)
     {
-        printf("\t1. Action 1\n");
+        printf("\t1. Add Product\n");
         printf("\t2. Action 2\n");
         printf("\t3. Logout\n");
         printf("Option: ");
@@ -121,7 +151,8 @@ void STAFF_menu()
         switch (option)
         {
         case 1:
-            printf("\nAction 1\n");
+            printf("\nADD PRODUCT\n");
+            STAFF_addProduct(staff);
             break;
         case 2:
             printf("\nAction 2\n");
@@ -131,6 +162,7 @@ void STAFF_menu()
             break;
         default:
             printf("\nERROR: Invalid option.\n");
+            break;
         }
     }
 }
@@ -168,7 +200,7 @@ void STAFF_login() {
 
     } while (!found);
 
-    STAFF_freeStaff(&staff);
+    STAFF_menu(staff);
 
-    STAFF_menu();
+    STAFF_freeStaff(&staff);
 }
