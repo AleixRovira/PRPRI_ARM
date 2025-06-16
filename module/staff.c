@@ -545,13 +545,44 @@ void STAFF_addDiscount(Staff staff)
 void STAFF_editDiscount(Staff staff)
 {
     char *input = NULL;
-    printf("\tEnter discount code to edit: ");
-    scanf("%ms", &input);
-    free(input);
+    Discount discount;
+    do
+    {
+        printf("\tEnter discount code to edit: ");
+        scanf("%ms", &input);
+        discount = DISCOUNT_findDiscountByCode(input, staff.shop_code);
+        if (discount.discount_code == NULL)
+        {
+            printf("\nERROR: Discount not found.\n");
+        }
+        free(input);
+        input = NULL;
+    } while (discount.discount_code == NULL);
 
-    printf("\tEnter new discount code: ");
-    scanf("%ms", &input);
+    Discount aux;
+    do
+    {
+        printf("\tEnter new discount code: ");
+        scanf("%ms", &input);
+        aux = DISCOUNT_findDiscountByCode(input, staff.shop_code);
+        if (aux.discount_code != NULL)
+        {
+            printf("\nERROR: Discount code already exists. Please enter a different code.\n");
+            DISCOUNT_freeDiscount(&aux);
+        }
+        else
+        {
+            break;
+        }
+        free(input);
+        input = NULL;
+    } while (1);
+
+    printf("\tCurrent discount code: %s\n", discount.discount_code);
+    printf("\tNew discount code: %s\n", input);
     free(input);
+    input = NULL;
+    PRODUCT_freeProduct(&discount);
 }
 
 void STAFF_menu(Staff staff)
