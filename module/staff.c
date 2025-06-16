@@ -626,9 +626,21 @@ void STAFF_editDiscount(Staff staff)
 void STAFF_deleteDiscount(Staff staff)
 {
     char *input = NULL;
-    printf("\tEnter discount code to delete: ");
-    scanf("%ms", &input);
-    free(input);
+    Discount discount;
+    do
+    {
+        printf("\tEnter discount code to delete: ");
+        scanf("%ms", &input);
+        discount = DISCOUNT_findDiscountByCode(input, staff.shop_code);
+        if (discount.discount_code == NULL)
+        {
+            printf("\nERROR: Discount not found.\n");
+        }
+        free(input);
+        input = NULL;
+    } while (discount.discount_code == NULL);
+
+    DISCOUNT_freeDiscount(&discount);
 }
 
 void STAFF_menu(Staff staff)
@@ -669,6 +681,7 @@ void STAFF_menu(Staff staff)
             break;
         case 6:
             printf("\nDELETE DISCOUNT\n");
+            STAFF_deleteDiscount(staff);
             break;
         case 7:
             printf("\nLogging out\n\n");
