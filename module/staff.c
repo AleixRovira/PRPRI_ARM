@@ -623,6 +623,14 @@ void STAFF_editDiscount(Staff staff)
     DISCOUNT_freeDiscount(&discount);
 }
 
+void STAFF_deleteDiscount(Staff staff)
+{
+    char *input = NULL;
+    printf("\tEnter discount code to delete: ");
+    scanf("%ms", &input);
+    free(input);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
