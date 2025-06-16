@@ -27,7 +27,7 @@ Client CLIENT_findClientByEmail(char *email)
     }
 
     Client client = {NULL, NULL, NULL, NULL, 0, 0.0f};
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%d;%f", &client.name, &client.email, &client.password, &client.card_number, &client.card_pin, &client.balance) == 6)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%d;%f", &client.name, &client.email, &client.password, &client.card_number, &client.card_pin, &client.balance) == 6)
     {
         if (strcmp(client.email, email) == 0)
         {
@@ -135,7 +135,7 @@ Shop *CLIENT_getNearShops(float latitude, float longitude)
 
     int n_shops = 0;
     Shop shop;
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
     {
         n_shops++;
         SHOP_freeShop(&shop);
@@ -153,7 +153,7 @@ Shop *CLIENT_getNearShops(float latitude, float longitude)
 
     rewind(file);
     int i = 0;
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f\n", &shops[i].code, &shops[i].name, &shops[i].address, &shops[i].phone, &shops[i].email, &shops[i].latitude, &shops[i].longitude) == 7)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f\n", &shops[i].code, &shops[i].name, &shops[i].address, &shops[i].phone, &shops[i].email, &shops[i].latitude, &shops[i].longitude) == 7)
     {
         coords[i].latitude = shops[i].latitude;
         coords[i].longitude = shops[i].longitude;

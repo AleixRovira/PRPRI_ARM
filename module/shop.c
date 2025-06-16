@@ -29,7 +29,7 @@ Shop SHOP_findShopByCode(char *code)
     }
 
     Shop shop = {NULL, NULL, NULL, NULL, NULL, 0.0f, 0.0f};
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
     {
         if (strcmp(shop.code, code) == 0)
         {
