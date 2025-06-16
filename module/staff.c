@@ -467,11 +467,13 @@ void STAFF_addDiscount(Staff staff)
         else
         {
             discount.discount_code = strdup(input);
+            free(input);
+            input = NULL;
             break;
         }
         free(input);
         input = NULL;
-    } while (discount.discount_code != NULL);
+    } while (1);
 
     char **product_codes = NULL;
     int num_products = 0;
@@ -519,16 +521,13 @@ void STAFF_addDiscount(Staff staff)
 
     discount.shop_code = strdup(staff.shop_code);
 
-    // PRINT INFO
-    printf("\nDiscount Details:\n");
-    printf("\tDiscount Code: %s\n", discount.discount_code);
-    printf("\tShop Code: %s\n", discount.shop_code);
-    printf("\tStart Date: %s\n", discount.start_date);
-    printf("\tEnd Date: %s\n", discount.end_date);
-    printf("\tProducts:\n");
-    for (int i = 0; i < num_products; i++)
+    // Guardar información en el archivo
+    for(int i = 0; i < num_products; i++)
     {
-        printf("\t\t- %s\n", product_codes[i]);
+        char *buffer = NULL;
+        asprintf(&buffer, "%s;%s;%s;%s;%s", discount.discount_code, product_codes[i], discount.shop_code, discount.start_date, discount.end_date);
+        GLOBAL_printLineInFile("files/discounts.txt", buffer);
+        free(buffer);
     }
 
     DISCOUNT_freeDiscount(&discount);
@@ -539,6 +538,8 @@ void STAFF_addDiscount(Staff staff)
     }
     free(product_codes);
     product_codes = NULL;
+
+    printf("\nDiscount added successfully!\n");
 }
 
 void STAFF_menu(Staff staff)
