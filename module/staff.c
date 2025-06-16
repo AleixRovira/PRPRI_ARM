@@ -542,6 +542,87 @@ void STAFF_addDiscount(Staff staff)
     printf("\nDiscount added successfully!\n");
 }
 
+void DISCOUNT_updateDiscountInFile(Discount old, char *new_code)
+{
+    FILE *file = fopen("files/discounts.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open discounts file for updating.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_discounts.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for updating discounts.\n");
+        return;
+    }
+
+    Discount discount;
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%ms", &discount.discount_code, &discount.product_code, &discount.shop_code, &discount.start_date, &discount.end_date) == 5)
+    {
+        if (strcmp(discount.discount_code, old.discount_code) == 0 && strcmp(discount.shop_code, old.shop_code) == 0)
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s\n", new_code, discount.product_code, discount.shop_code, discount.start_date, discount.end_date);
+        }
+        else
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s\n", discount.discount_code, discount.product_code, discount.shop_code, discount.start_date, discount.end_date);
+        }
+        DISCOUNT_freeDiscount(&discount);
+    }
+
+    fclose(file);
+    fclose(aux);
+    remove("files/discounts.txt");
+    rename("files/temp_discounts.txt", "files/discounts.txt");
+
+    printf("\nDiscount updated successfully!\n");
+}
+
+void STAFF_editDiscount(Staff staff)
+{
+    char *input = NULL;
+    Discount discount;
+    do
+    {
+        printf("\tEnter discount code to edit: ");
+        scanf("%ms", &input);
+        discount = DISCOUNT_findDiscountByCode(input, staff.shop_code);
+        if (discount.discount_code == NULL)
+        {
+            printf("\nERROR: Discount not found.\n");
+        }
+        free(input);
+        input = NULL;
+    } while (discount.discount_code == NULL);
+
+    Discount aux;
+    do
+    {
+        printf("\tEnter new discount code: ");
+        scanf("%ms", &input);
+        aux = DISCOUNT_findDiscountByCode(input, staff.shop_code);
+        if (aux.discount_code != NULL)
+        {
+            printf("\nERROR: Discount code already exists. Please enter a different code.\n");
+            DISCOUNT_freeDiscount(&aux);
+        }
+        else
+        {
+            break;
+        }
+        free(input);
+        input = NULL;
+    } while (1);
+
+    DISCOUNT_updateDiscountInFile(discount, input);
+    free(input);
+    input = NULL;
+    DISCOUNT_freeDiscount(&discount);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
@@ -576,6 +657,7 @@ void STAFF_menu(Staff staff)
             break;
         case 5:
             printf("\nEDIT DISCOUNT\n");
+            STAFF_editDiscount(staff);
             break;
         case 6:
             printf("\nDELETE DISCOUNT\n");
