@@ -442,12 +442,6 @@ void STAFF_addDiscount(Staff staff)
 
     discount.shop_code = strdup(staff.shop_code);
 
-    printf("\nDiscount: %s\n", discount.discount_code);
-    printf("Product Code: %s\n", discount.product_code);
-    printf("Shop Code: %s\n", discount.shop_code);
-    printf("Start Date: %s\n", discount.start_date);
-    printf("End Date: %s\n", discount.end_date);
-
     DISCOUNT_freeDiscount(&discount);
 }
 
