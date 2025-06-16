@@ -542,6 +542,18 @@ void STAFF_addDiscount(Staff staff)
     printf("\nDiscount added successfully!\n");
 }
 
+void STAFF_editDiscount(Staff staff)
+{
+    char *input = NULL;
+    printf("\tEnter discount code to edit: ");
+    scanf("%ms", &input);
+    free(input);
+
+    printf("\tEnter new discount code: ");
+    scanf("%ms", &input);
+    free(input);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
@@ -576,6 +588,7 @@ void STAFF_menu(Staff staff)
             break;
         case 5:
             printf("\nEDIT DISCOUNT\n");
+            STAFF_editDiscount(staff);
             break;
         case 6:
             printf("\nDELETE DISCOUNT\n");
