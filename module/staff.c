@@ -623,6 +623,62 @@ void STAFF_editDiscount(Staff staff)
     DISCOUNT_freeDiscount(&discount);
 }
 
+void DISCOUNT_deleteDiscountInFile(Discount discount)
+{
+    FILE *file = fopen("files/discounts.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open discounts file for deleting.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_discounts.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for deleting discounts.\n");
+        return;
+    }
+
+    Discount current_discount;
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%ms", &current_discount.discount_code, &current_discount.product_code, &current_discount.shop_code, &current_discount.start_date, &current_discount.end_date) == 5)
+    {
+        if (strcmp(current_discount.discount_code, discount.discount_code) != 0 || strcmp(current_discount.shop_code, discount.shop_code) != 0)
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s\n", current_discount.discount_code, current_discount.product_code, current_discount.shop_code, current_discount.start_date, current_discount.end_date);
+        }
+        DISCOUNT_freeDiscount(&current_discount);
+    }
+
+    fclose(file);
+    fclose(aux);
+    remove("files/discounts.txt");
+    rename("files/temp_discounts.txt", "files/discounts.txt");
+
+    printf("\nDiscount deleted successfully!\n");
+}
+
+void STAFF_deleteDiscount(Staff staff)
+{
+    char *input = NULL;
+    Discount discount;
+    do
+    {
+        printf("\tEnter discount code to delete: ");
+        scanf("%ms", &input);
+        discount = DISCOUNT_findDiscountByCode(input, staff.shop_code);
+        if (discount.discount_code == NULL)
+        {
+            printf("\nERROR: Discount not found.\n");
+        }
+        free(input);
+        input = NULL;
+    } while (discount.discount_code == NULL);
+
+    DISCOUNT_deleteDiscountInFile(discount);
+    DISCOUNT_freeDiscount(&discount);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
@@ -661,6 +717,7 @@ void STAFF_menu(Staff staff)
             break;
         case 6:
             printf("\nDELETE DISCOUNT\n");
+            STAFF_deleteDiscount(staff);
             break;
         case 7:
             printf("\nLogging out\n\n");
