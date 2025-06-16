@@ -542,6 +542,45 @@ void STAFF_addDiscount(Staff staff)
     printf("\nDiscount added successfully!\n");
 }
 
+void DISCOUNT_updateDiscountInFile(Discount old, char *new_code)
+{
+    FILE *file = fopen("files/discounts.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open discounts file for updating.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_discounts.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for updating discounts.\n");
+        return;
+    }
+
+    Discount discount;
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%ms", &discount.discount_code, &discount.product_code, &discount.shop_code, &discount.start_date, &discount.end_date) == 5)
+    {
+        if (strcmp(discount.discount_code, old.discount_code) == 0 && strcmp(discount.shop_code, old.shop_code) == 0)
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s\n", new_code, discount.product_code, discount.shop_code, discount.start_date, discount.end_date);
+        }
+        else
+        {
+            fprintf(aux, "%s;%s;%s;%s;%s\n", discount.discount_code, discount.product_code, discount.shop_code, discount.start_date, discount.end_date);
+        }
+        DISCOUNT_freeDiscount(&discount);
+    }
+
+    fclose(file);
+    fclose(aux);
+    remove("files/discounts.txt");
+    rename("files/temp_discounts.txt", "files/discounts.txt");
+
+    printf("\nDiscount updated successfully!\n");
+}
+
 void STAFF_editDiscount(Staff staff)
 {
     char *input = NULL;
@@ -578,11 +617,10 @@ void STAFF_editDiscount(Staff staff)
         input = NULL;
     } while (1);
 
-    printf("\tCurrent discount code: %s\n", discount.discount_code);
-    printf("\tNew discount code: %s\n", input);
+    DISCOUNT_updateDiscountInFile(discount, input);
     free(input);
     input = NULL;
-    PRODUCT_freeProduct(&discount);
+    DISCOUNT_freeDiscount(&discount);
 }
 
 void STAFF_menu(Staff staff)
