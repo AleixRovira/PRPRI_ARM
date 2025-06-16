@@ -51,7 +51,7 @@ void STAFF_addDiscount(Staff staff);
 Discount DISCOUNT_findDiscountByCode(char *discount_code, char *shop_code);
 void DISCOUNT_updateDiscountInFile(Discount old, char *new_code);
 void STAFF_editDiscount(Staff staff);
-void STAFF_deleteDiscount(Staff staff)
+void STAFF_deleteDiscount(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 
