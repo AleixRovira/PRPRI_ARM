@@ -9,7 +9,6 @@ void STAFF_freeStaff(Staff *staff)
     free(staff->password);
     free(staff->shop_code);
 
-    // Optional: set pointers to NULL to avoid double free
     staff->name = NULL;
     staff->email = NULL;
     staff->password = NULL;
@@ -18,18 +17,34 @@ void STAFF_freeStaff(Staff *staff)
 
 void PRODUCT_freeProduct(Product *product)
 {
+    free(product->code);
     free(product->name);
     free(product->category);
     free(product->description);
     free(product->shop_code);
 
-    // Optional: set pointers to NULL to avoid double free
+    product->code = NULL;
     product->name = NULL;
     product->category = NULL;
     product->description = NULL;
     product->shop_code = NULL;
     product->price = 0.0f;
     product->quantity = 0;
+}
+
+void DISCOUNT_freeDiscount(Discount *discount)
+{
+    free(discount->product_code);
+    free(discount->shop_code);
+    free(discount->discount_code);
+    free(discount->start_date);
+    free(discount->end_date);
+
+    discount->product_code = NULL;
+    discount->shop_code = NULL;
+    discount->discount_code = NULL;
+    discount->start_date = NULL;
+    discount->end_date = NULL;
 }
 
 Staff STAFF_findStaffByEmail(char *email)
@@ -124,18 +139,18 @@ void STAFF_register()
     printf("\nStaff registered successfully!\n");
 }
 
-Product PRODUCT_findProductByName(char *name, char *shop_code)
+Product PRODUCT_findProductByCode(char *code, char *shop_code)
 {
     FILE *file = fopen("files/products.txt", "r");
     if (!file)
     {
-        return (Product){NULL, NULL, 0.0f, 0, NULL, NULL};
+        return (Product){NULL, NULL, NULL, 0.0f, 0, NULL, NULL};
     }
 
-    Product product = {NULL, NULL, 0.0f, 0, NULL, NULL};
-    while (fscanf(file, "%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 6)
+    Product product = {NULL, NULL, NULL, 0.0f, 0, NULL, NULL};
+    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.code, &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 7)
     {
-        if (strcmp(product.name, name) == 0 && strcmp(product.shop_code, shop_code) == 0)
+        if (strcmp(product.code, code) == 0 && strcmp(product.shop_code, shop_code) == 0)
         {
             fclose(file);
             return product;
@@ -144,7 +159,7 @@ Product PRODUCT_findProductByName(char *name, char *shop_code)
     }
 
     fclose(file);
-    return (Product){NULL, NULL, 0.0f, 0, NULL, NULL};
+    return (Product){NULL, NULL, NULL, 0.0f, 0, NULL, NULL};
 }
 
 void STAFF_addProduct(Staff staff)
@@ -153,16 +168,19 @@ void STAFF_addProduct(Staff staff)
 
     do
     {
-        printf("\tEnter product name: ");
-        scanf(" %ms", &product.name);
-        product = PRODUCT_findProductByName(product.name, staff.shop_code);
-        if (product.name != NULL)
+        printf("\tEnter product code: ");
+        scanf(" %ms", &product.code);
+        product = PRODUCT_findProductByCode(product.code, staff.shop_code);
+        if (product.code != NULL)
         {
-            printf("\nERROR: Product name already exists. Please enter a different name.\n");
-            free(product.name);
-            product.name = NULL;
+            printf("\nERROR: Product code already exists. Please enter a different code.\n");
+            free(product.code);
+            product.code = NULL;
         }
-    } while (product.name == NULL);
+    } while (product.code == NULL);
+
+    printf("\tEnter product name: ");
+    scanf(" %ms", &product.name);
 
     printf("\tEnter product category: ");
     scanf("%ms", &product.category);
@@ -246,14 +264,14 @@ void STAFF_updateProduct(Staff staff)
 {
     Product product;
 
-    printf("\tEnter product name to update: ");
-    scanf("%ms", &product.name);
-    product = PRODUCT_findProductByName(product.name, staff.shop_code);
-    if (product.name == NULL)
+    printf("\tEnter product code to update: ");
+    scanf("%ms", &product.code);
+    product = PRODUCT_findProductByCode(product.code, staff.shop_code);
+    if (product.code == NULL)
     {
         printf("\nERROR: Product not found.\n");
-        free(product.name);
-        product.name = NULL;
+        free(product.code);
+        product.code = NULL;
         return;
     }
 
@@ -406,15 +424,39 @@ void STAFF_updateShop(Staff staff)
     SHOP_freeShop(&aux);
 }
 
+void STAFF_addDiscount(Staff staff)
+{
+    Discount discount;
+
+    printf("\tEnter discount code: ");
+    scanf("%ms", &discount.discount_code);
+
+    printf("\tEnter product code for discount: ");
+    scanf("%ms", &discount.product_code);
+
+    printf("\tEnter start date (YYYY-MM-DD): ");
+    scanf("%ms", &discount.start_date);
+
+    printf("\tEnter end date (YYYY-MM-DD): ");
+    scanf("%ms", &discount.end_date);
+
+    discount.shop_code = strdup(staff.shop_code);
+
+    DISCOUNT_freeDiscount(&discount);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 4)
+    while (option != 7)
     {
         printf("\t1. Add Product\n");
         printf("\t2. Update Product\n");
         printf("\t3. Update Shop\n");
-        printf("\t4. Logout\n");
+        printf("\t4. Add discount\n");
+        printf("\t5. Edit discount\n");
+        printf("\t6. Delete discount\n");
+        printf("\t7. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -432,6 +474,16 @@ void STAFF_menu(Staff staff)
             STAFF_updateShop(staff);
             break;
         case 4:
+            printf("\nADD DISCOUNT\n");
+            STAFF_addDiscount(staff);
+            break;
+        case 5:
+            printf("\nEDIT DISCOUNT\n");
+            break;
+        case 6:
+            printf("\nDELETE DISCOUNT\n");
+            break;
+        case 7:
             printf("\nLogging out\n\n");
             break;
         default:
