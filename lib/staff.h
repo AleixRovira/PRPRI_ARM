@@ -17,6 +17,7 @@ typedef struct
 
 typedef struct
 {
+    char *code;
     char *name;
     char *category;
     float price;
@@ -25,16 +26,28 @@ typedef struct
     char *shop_code;
 } Product;
 
+typedef struct 
+{
+    char *product_code;
+    char *shop_code;
+    char *discount_code;
+    char *start_date;
+    char *end_date;
+} Discount;
+
+
 void STAFF_freeStaff(Staff *staff);
 void PRODUCT_freeProduct(Product *product);
+void DISCOUNT_freeDiscount(Discount *discount);
 Staff STAFF_findStaffByEmail(char *email);
 void STAFF_register();
-Product PRODUCT_findProductByName(char *name, char *shop_code);
+Product PRODUCT_findProductByCode(char *name, char *shop_code);
 void STAFF_addProduct(Staff staff);
 void STAFF_updateProductInFile(char *old_name, Product new_product);
 void STAFF_updateProduct(Staff staff);
 void STAFF_updateShopInFile(Shop shop);
 void STAFF_updateShop(Staff staff);
+void STAFF_addDiscount(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 
