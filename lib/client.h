@@ -21,6 +21,7 @@ void CLIENT_register();
 Shop *CLIENT_getNearShops(float latitude, float longitude);
 void CLIENT_findNearShops();
 Discount *CLIENT_getDiscounts(int *n_discounts);
+Shop *CLIENT_getShopsWithDiscounts(Discount *discounts, int n_discounts, int *n_shops);
 void CLIENT_viewDiscounts();
 void CLIENT_menu();
 void CLIENT_login();

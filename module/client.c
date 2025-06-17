@@ -278,6 +278,66 @@ Discount *CLIENT_getDiscounts(int *n_discounts)
     return discounts;
 }
 
+Shop *CLIENT_getShopsWithDiscounts(Discount *discounts, int n_discounts, int *n_shops)
+{
+    if (n_discounts == 0)
+    {
+        *n_shops = 0;
+        return NULL;
+    }
+
+    Shop *shops = NULL;
+    *n_shops = 0;
+
+    for (int i = 0; i < n_discounts; i++)
+    {
+        int already_added = 0;
+        for (int j = 0; j < *n_shops; j++)
+        {
+            if (strcmp(shops[j].code, discounts[i].shop_code) == 0)
+            {
+                already_added = 1;
+                break;
+            }
+        }
+        if (already_added)
+            continue;
+
+        FILE *file = fopen("files/shops.txt", "r");
+        if (!file)
+        {
+            printf("\nERROR: Could not open shops file.\n");
+            for (int k = 0; k < *n_shops; k++)
+                SHOP_freeShop(&shops[k]);
+            free(shops);
+            return NULL;
+        }
+
+        Shop shop;
+        int found = 0;
+        while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f",
+                      &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
+        {
+            if (strcmp(shop.code, discounts[i].shop_code) == 0)
+            {
+                shops = realloc(shops, sizeof(Shop) * (*n_shops + 1));
+                shops[*n_shops] = shop;
+                (*n_shops)++;
+                found = 1;
+                break;
+            }
+            SHOP_freeShop(&shop);
+        }
+        fclose(file);
+        if (!found)
+        {
+            SHOP_freeShop(&shop);
+        }
+    }
+
+    return shops;
+}
+
 void CLIENT_viewDiscounts()
 {
     int n_discounts = 0;
@@ -300,11 +360,37 @@ void CLIENT_viewDiscounts()
         printf("\tEnd Date: %s\n", discounts[i].end_date);
     }
 
+    int n_shops = 0;
+    Shop *shops_with_discounts = CLIENT_getShopsWithDiscounts(discounts, n_discounts, &n_shops);
+
+    if(n_shops == 0)
+    {
+        printf("\nNo shops found with discounts.\n");
+        free(discounts);
+        return;
+    }
+    printf("\nSHOPS WITH DISCOUNTS:\n");
+    for(int i = 0; i < n_shops; i++)
+    {
+        printf("\nShop %d:\n", i + 1);
+        printf("\tName: %s\n", shops_with_discounts[i].name);
+        printf("\tAddress: %s\n", shops_with_discounts[i].address);
+        printf("\tPhone: %s\n", shops_with_discounts[i].phone);
+        printf("\tEmail: %s\n", shops_with_discounts[i].email);
+        printf("\tCoordinates: (%.2f, %.2f)\n", shops_with_discounts[i].latitude, shops_with_discounts[i].longitude);
+    }
+
     for(int i = 0; i < n_discounts; i++)
     {
         DISCOUNT_freeDiscount(&discounts[i]);
     }
     free(discounts);
+
+    for(int i = 0; i < n_shops; i++)
+    {
+        SHOP_freeShop(&shops_with_discounts[i]);
+    }
+    free(shops_with_discounts);
     discounts = NULL;
 
 }
