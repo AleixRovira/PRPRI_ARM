@@ -250,13 +250,72 @@ void CLIENT_findNearShops()
     }
 }
 
+Discount *CLIENT_getDiscounts(int *n_discounts)
+{
+    FILE *file = fopen("files/discounts.txt", "r");
+    if (!file) {
+        printf("\nERROR: Could not open discounts file.\n");
+        *n_discounts = 0;
+        return NULL;
+    }
+
+    *n_discounts = 0;
+    Discount discount;
+    Discount *discounts = NULL;
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%ms", &discount.discount_code, &discount.product_code, &discount.shop_code, &discount.start_date, &discount.end_date) == 5)
+    {
+        discounts = realloc(discounts, sizeof(Discount) * (*n_discounts + 1));
+        discounts[*n_discounts].product_code = strdup(discount.product_code);
+        discounts[*n_discounts].shop_code = strdup(discount.shop_code);
+        discounts[*n_discounts].discount_code = strdup(discount.discount_code);
+        discounts[*n_discounts].start_date = strdup(discount.start_date);
+        discounts[*n_discounts].end_date = strdup(discount.end_date);
+
+        (*n_discounts)++;
+        DISCOUNT_freeDiscount(&discount);
+    }
+    fclose(file);
+    return discounts;
+}
+
+void CLIENT_viewDiscounts()
+{
+    int n_discounts = 0;
+    Discount *discounts = CLIENT_getDiscounts(&n_discounts);
+
+    if(n_discounts == 0)
+    {
+        printf("\nNo discounts found.\n");
+        return;
+    }
+
+    printf("\nAVAILABLE DISCOUNTS:\n");
+    for(int i = 0; i < n_discounts; i++)
+    {
+        printf("\nDiscount %d:\n", i + 1);
+        printf("\tDiscount Code: %s\n", discounts[i].discount_code);
+        printf("\tProduct Code: %s\n", discounts[i].product_code);
+        printf("\tShop Code: %s\n", discounts[i].shop_code);
+        printf("\tStart Date: %s\n", discounts[i].start_date);
+        printf("\tEnd Date: %s\n", discounts[i].end_date);
+    }
+
+    for(int i = 0; i < n_discounts; i++)
+    {
+        DISCOUNT_freeDiscount(&discounts[i]);
+    }
+    free(discounts);
+    discounts = NULL;
+
+}
+
 void CLIENT_menu()
 {
     int option = 0;
     while (option != 3)
     {
         printf("\t1. Find near shops\n");
-        printf("\t2. Action 2\n");
+        printf("\t2. View discounts\n");
         printf("\t3. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
@@ -267,7 +326,8 @@ void CLIENT_menu()
             CLIENT_findNearShops();
             break;
         case 2:
-            printf("\nAction 2\n");
+            printf("\nVIEW DISCOUNTS\n");
+            CLIENT_viewDiscounts();
             break;
         case 3:
             printf("\nLogging out\n\n");

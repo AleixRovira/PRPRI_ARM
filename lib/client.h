@@ -4,6 +4,7 @@
 #include "global.h"
 #include "shop.h"
 #include "operations.h"
+#include "staff.h"
 
 typedef struct {
     char *name;
@@ -19,6 +20,8 @@ Client CLIENT_findClientByEmail(char *email);
 void CLIENT_register();
 Shop *CLIENT_getNearShops(float latitude, float longitude);
 void CLIENT_findNearShops();
+Discount *CLIENT_getDiscounts(int *n_discounts);
+void CLIENT_viewDiscounts();
 void CLIENT_menu();
 void CLIENT_login();
 
