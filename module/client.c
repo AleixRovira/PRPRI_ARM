@@ -27,7 +27,7 @@ Client CLIENT_findClientByEmail(char *email)
     }
 
     Client client = {NULL, NULL, NULL, NULL, 0, 0.0f};
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%d;%f", &client.name, &client.email, &client.password, &client.card_number, &client.card_pin, &client.balance) == 6)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%d;%f", &client.name, &client.email, &client.password, &client.card_number, &client.card_pin, &client.balance) == 6)
     {
         if (strcmp(client.email, email) == 0)
         {
@@ -135,7 +135,7 @@ Shop *CLIENT_getNearShops(float latitude, float longitude)
 
     int n_shops = 0;
     Shop shop;
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
     {
         n_shops++;
         SHOP_freeShop(&shop);
@@ -153,7 +153,7 @@ Shop *CLIENT_getNearShops(float latitude, float longitude)
 
     rewind(file);
     int i = 0;
-    while (fscanf(file, "%m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f\n", &shops[i].code, &shops[i].name, &shops[i].address, &shops[i].phone, &shops[i].email, &shops[i].latitude, &shops[i].longitude) == 7)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f\n", &shops[i].code, &shops[i].name, &shops[i].address, &shops[i].phone, &shops[i].email, &shops[i].latitude, &shops[i].longitude) == 7)
     {
         coords[i].latitude = shops[i].latitude;
         coords[i].longitude = shops[i].longitude;
@@ -250,13 +250,154 @@ void CLIENT_findNearShops()
     }
 }
 
+Discount *CLIENT_getDiscounts(int *n_discounts)
+{
+    FILE *file = fopen("files/discounts.txt", "r");
+    if (!file) {
+        printf("\nERROR: Could not open discounts file.\n");
+        *n_discounts = 0;
+        return NULL;
+    }
+
+    *n_discounts = 0;
+    Discount discount;
+    Discount *discounts = NULL;
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%ms", &discount.discount_code, &discount.product_code, &discount.shop_code, &discount.start_date, &discount.end_date) == 5)
+    {
+        discounts = realloc(discounts, sizeof(Discount) * (*n_discounts + 1));
+        discounts[*n_discounts].product_code = strdup(discount.product_code);
+        discounts[*n_discounts].shop_code = strdup(discount.shop_code);
+        discounts[*n_discounts].discount_code = strdup(discount.discount_code);
+        discounts[*n_discounts].start_date = strdup(discount.start_date);
+        discounts[*n_discounts].end_date = strdup(discount.end_date);
+
+        (*n_discounts)++;
+        DISCOUNT_freeDiscount(&discount);
+    }
+    fclose(file);
+    return discounts;
+}
+
+Shop *CLIENT_getShopsWithDiscounts(Discount *discounts, int n_discounts, int *n_shops)
+{
+    if (n_discounts == 0)
+    {
+        *n_shops = 0;
+        return NULL;
+    }
+
+    Shop *shops = NULL;
+    *n_shops = 0;
+
+    for (int i = 0; i < n_discounts; i++)
+    {
+        int already_added = 0;
+        for (int j = 0; j < *n_shops; j++)
+        {
+            if (strcmp(shops[j].code, discounts[i].shop_code) == 0)
+            {
+                already_added = 1;
+                break;
+            }
+        }
+        if (already_added)
+            continue;
+
+        FILE *file = fopen("files/shops.txt", "r");
+        if (!file)
+        {
+            printf("\nERROR: Could not open shops file.\n");
+            for (int k = 0; k < *n_shops; k++)
+                SHOP_freeShop(&shops[k]);
+            free(shops);
+            return NULL;
+        }
+
+        Shop shop;
+        int found = 0;
+        while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f",
+                      &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
+        {
+            if (strcmp(shop.code, discounts[i].shop_code) == 0)
+            {
+                shops = realloc(shops, sizeof(Shop) * (*n_shops + 1));
+                shops[*n_shops] = shop;
+                (*n_shops)++;
+                found = 1;
+                break;
+            }
+            SHOP_freeShop(&shop);
+        }
+        fclose(file);
+        if (!found)
+        {
+            SHOP_freeShop(&shop);
+        }
+    }
+
+    return shops;
+}
+
+void CLIENT_viewDiscounts()
+{
+    int n_discounts = 0;
+    Discount *discounts = CLIENT_getDiscounts(&n_discounts);
+
+    if(n_discounts == 0)
+    {
+        printf("\nNo discounts found.\n");
+        return;
+    }
+
+    int n_shops = 0;
+    Shop *shops_with_discounts = CLIENT_getShopsWithDiscounts(discounts, n_discounts, &n_shops);
+
+    if(n_shops == 0)
+    {
+        printf("\nNo shops found with discounts.\n");
+        free(discounts);
+        return;
+    }
+
+    printf("\nDISCOUNTS:\n");
+    for(int i = 0; i < n_shops; i++)
+    {
+        printf("\nSHOP %d:\n", i + 1);
+        for(int j = 0; j < n_discounts; j++)
+        {
+            if (strcmp(shops_with_discounts[i].code, discounts[j].shop_code) == 0)
+            {
+                printf("\tDISCOUNT %d:\n", j + 1);
+                printf("\tDiscount Code: %s\n", discounts[j].discount_code);
+                printf("\tProduct Code: %s\n", discounts[j].product_code);
+                printf("\tStart Date: %s\n", discounts[j].start_date);
+                printf("\tEnd Date: %s\n\n", discounts[j].end_date);
+            }
+        }
+    }
+
+    for(int i = 0; i < n_discounts; i++)
+    {
+        DISCOUNT_freeDiscount(&discounts[i]);
+    }
+    free(discounts);
+
+    for(int i = 0; i < n_shops; i++)
+    {
+        SHOP_freeShop(&shops_with_discounts[i]);
+    }
+    free(shops_with_discounts);
+    discounts = NULL;
+
+}
+
 void CLIENT_menu()
 {
     int option = 0;
     while (option != 3)
     {
         printf("\t1. Find near shops\n");
-        printf("\t2. Action 2\n");
+        printf("\t2. View discounts\n");
         printf("\t3. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
@@ -267,7 +408,8 @@ void CLIENT_menu()
             CLIENT_findNearShops();
             break;
         case 2:
-            printf("\nAction 2\n");
+            printf("\nVIEW DISCOUNTS\n");
+            CLIENT_viewDiscounts();
             break;
         case 3:
             printf("\nLogging out\n\n");
