@@ -48,8 +48,44 @@ void TEST_CLIENT_getNearShops() {
     }
 }
 
+void TEST_CLIENT_getDiscounts() {
+    int n_discounts = 0;
+    Discount *discounts = CLIENT_getDiscounts(&n_discounts);
+    if (n_discounts > 0) {
+        printf("TEST_CLIENT_getDiscounts: PASSED\n");
+        free(discounts);
+    } else {
+        printf("TEST_CLIENT_getDiscounts: FAILED\n");
+    }
+}
+
+void TEST_CLIENT_getShopsWithDiscounts() {
+    int n_discounts = 0;
+    Discount *discounts = CLIENT_getDiscounts(&n_discounts);
+    if (n_discounts == 0) {
+        printf("No discounts available.\n");
+        return;
+    }
+
+    int n_shops = 0;
+    Shop *shops_with_discounts = CLIENT_getShopsWithDiscounts(discounts, n_discounts, &n_shops);
+    if (n_shops > 0) {
+        printf("TEST_CLIENT_getShopsWithDiscounts: PASSED\n");
+        free(shops_with_discounts);
+    } else {
+        printf("TEST_CLIENT_getShopsWithDiscounts: FAILED\n");
+    }
+
+    for(int i = 0; i < n_discounts; i++) {
+        DISCOUNT_freeDiscount(&discounts[i]);
+    }
+    free(discounts);
+}
+
 void TEST_CLIENT_main() {
     TEST_CLIENT_freeClient();
     TEST_CLIENT_findClientByEmail();
     TEST_CLIENT_getNearShops();
+    TEST_CLIENT_getDiscounts();
+    TEST_CLIENT_getShopsWithDiscounts();
 }

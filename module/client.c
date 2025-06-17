@@ -349,17 +349,6 @@ void CLIENT_viewDiscounts()
         return;
     }
 
-    printf("\nAVAILABLE DISCOUNTS:\n");
-    for(int i = 0; i < n_discounts; i++)
-    {
-        printf("\nDiscount %d:\n", i + 1);
-        printf("\tDiscount Code: %s\n", discounts[i].discount_code);
-        printf("\tProduct Code: %s\n", discounts[i].product_code);
-        printf("\tShop Code: %s\n", discounts[i].shop_code);
-        printf("\tStart Date: %s\n", discounts[i].start_date);
-        printf("\tEnd Date: %s\n", discounts[i].end_date);
-    }
-
     int n_shops = 0;
     Shop *shops_with_discounts = CLIENT_getShopsWithDiscounts(discounts, n_discounts, &n_shops);
 
@@ -369,15 +358,22 @@ void CLIENT_viewDiscounts()
         free(discounts);
         return;
     }
-    printf("\nSHOPS WITH DISCOUNTS:\n");
+
+    printf("\nDISCOUNTS:\n");
     for(int i = 0; i < n_shops; i++)
     {
-        printf("\nShop %d:\n", i + 1);
-        printf("\tName: %s\n", shops_with_discounts[i].name);
-        printf("\tAddress: %s\n", shops_with_discounts[i].address);
-        printf("\tPhone: %s\n", shops_with_discounts[i].phone);
-        printf("\tEmail: %s\n", shops_with_discounts[i].email);
-        printf("\tCoordinates: (%.2f, %.2f)\n", shops_with_discounts[i].latitude, shops_with_discounts[i].longitude);
+        printf("\nSHOP %d:\n", i + 1);
+        for(int j = 0; j < n_discounts; j++)
+        {
+            if (strcmp(shops_with_discounts[i].code, discounts[j].shop_code) == 0)
+            {
+                printf("\tDISCOUNT %d:\n", j + 1);
+                printf("\tDiscount Code: %s\n", discounts[j].discount_code);
+                printf("\tProduct Code: %s\n", discounts[j].product_code);
+                printf("\tStart Date: %s\n", discounts[j].start_date);
+                printf("\tEnd Date: %s\n\n", discounts[j].end_date);
+            }
+        }
     }
 
     for(int i = 0; i < n_discounts; i++)
