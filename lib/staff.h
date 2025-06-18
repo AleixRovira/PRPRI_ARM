@@ -60,6 +60,7 @@ void STAFF_placeOrder(Staff staff);
 void STAFF_updateProductQuantityInFile(char *product_code, int quantity, char *shop_code);
 void STAFF_receiveProducts(char *filename, Staff staff);
 void STAFF_receiveOrder(Staff staff);
+void STAFF_filterStock(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 
