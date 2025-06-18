@@ -54,9 +54,55 @@ void TEST_GLOBAL_validateEmail()
     }
 }
 
+void TEST_GLOBAL_toLower()
+{
+    char *result = GLOBAL_toLower("Hello World");
+    if (strcmp(result, "hello world") == 0)
+    {
+        printf("TEST_GLOBAL_toLower: PASSED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_toLower: FAILED\n");
+    }
+    free(result);
+}
+
+void TEST_GLOBAL_containsIgnoreCase()
+{
+    if (GLOBAL_containsIgnoreCase("Hello World", "hello"))
+    {
+        printf("TEST_GLOBAL_containsIgnoreCase: PASSED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_containsIgnoreCase: FAILED\n");
+    }
+
+    if (GLOBAL_containsIgnoreCase("Hello World", "WORLD"))
+    {
+        printf("TEST_GLOBAL_containsIgnoreCase: PASSED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_containsIgnoreCase: FAILED\n");
+    }
+
+    if (GLOBAL_containsIgnoreCase("Hello World", "test"))
+    {
+        printf("TEST_GLOBAL_containsIgnoreCase: FAILED\n");
+    }
+    else
+    {
+        printf("TEST_GLOBAL_containsIgnoreCase: PASSED\n");
+    }
+}
+
 void TEST_GLOBAL_main()
 {
     TEST_GLOBAL_printLineInFile();
     TEST_GLOBAL_validatePassword();
     TEST_GLOBAL_validateEmail();
+    TEST_GLOBAL_toLower();
+    TEST_GLOBAL_containsIgnoreCase();
 }

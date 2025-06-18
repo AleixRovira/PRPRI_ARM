@@ -87,3 +87,33 @@ char GLOBAL_validateEmail(char *email) {
 
     return valid;
 }
+
+char *GLOBAL_toLower(const char *str)
+{
+    if (!str)
+        return NULL;
+
+    char *lower_str = strdup(str);
+    for (int i = 0; lower_str[i]; i++)
+    {
+        if (lower_str[i] >= 'A' && lower_str[i] <= 'Z')
+            lower_str[i] = lower_str[i] + ('a' - 'A');
+    }
+    return lower_str;
+}
+
+int GLOBAL_containsIgnoreCase(const char *text, const char *filter)
+{
+    if (!text || !filter)
+        return 0;
+
+    char *lower_text = GLOBAL_toLower(text);
+    char *lower_filter = GLOBAL_toLower(filter);
+
+    int result = strstr(lower_text, lower_filter) != NULL;
+
+    free(lower_text);
+    free(lower_filter);
+
+    return result;
+}

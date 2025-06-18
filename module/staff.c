@@ -999,9 +999,9 @@ void STAFF_showFilteredStock(int option, char *filter, float min_price, float ma
     {
         int show_product = 1;
 
-        if (option == 1 && filter != NULL && strcasecmp(products[i].name, filter) != 0)
+        if (option == 1 && filter != NULL && !GLOBAL_containsIgnoreCase(products[i].name, filter))
             show_product = 0;
-        else if (option == 2 && filter != NULL && strcasecmp(products[i].category, filter) != 0)
+        else if (option == 2 && filter != NULL && !GLOBAL_containsIgnoreCase(products[i].category, filter))
             show_product = 0;
         else if (option == 3 && !OP_isInRange(products[i].price, min_price, max_price, 1))
             show_product = 0;

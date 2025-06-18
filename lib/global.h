@@ -8,5 +8,7 @@
 int GLOBAL_printLineInFile(char *filename, char *line);
 int GLOBAL_validatePassword(char* password);
 char GLOBAL_validateEmail(char *email);
+char *GLOBAL_toLower(const char *str);
+int GLOBAL_containsIgnoreCase(const char *text, const char *filter);
 
 #endif
