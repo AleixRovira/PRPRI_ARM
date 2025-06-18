@@ -766,23 +766,30 @@ void STAFF_placeOrder(Staff staff)
             break;
         }
 
-        printf("\tEnter quantity for product %s: ", input);
-        scanf("%s", input);
-
-        // Product product = PRODUCT_findProductByCode(input, staff.shop_code);
-        // if (product.code == NULL)
-        // {
-        //     printf("\nERROR: Product not found. Please enter a valid product code.\n");
-        // }
-        // else
-        // {
-        //     product_codes = realloc(product_codes, sizeof(char *) * (count + 1));
-        //     product_codes[count] = strdup(input);
-        //     count++;
-        //     free(input);
-        //     input = NULL;
-        //     PRODUCT_freeProduct(&product);
-        // }
+        Product product = PRODUCT_findProductByCode(input, staff.shop_code);
+        if (product.code == NULL)
+        {
+            printf("\nERROR: Product not found. Please enter a valid product code.\n");
+        }
+        else
+        {
+            product_codes = realloc(product_codes, sizeof(char *) * (count + 1));
+            product_codes[count] = strdup(input);
+            quantities = realloc(quantities, sizeof(int) * (count + 1));
+            free(input);
+            input = NULL;
+            do
+            {
+                printf("\tEnter quantity for product %s: ", product_codes[count]);
+                scanf("%d", &quantities[count]);
+                if (quantities[count] < 0)
+                {
+                    printf("\nERROR: Invalid quantity. Quantity must be greater than 0.\n");
+                }
+            } while (quantities[count] <= 0);
+            count++;
+            PRODUCT_freeProduct(&product);
+        }
     }
 }
 
@@ -798,7 +805,7 @@ void STAFF_menu(Staff staff)
         printf("\t5. Edit discount\n");
         printf("\t6. Delete discount\n");
         printf("\t7. View stock\n");
-        printf("\t8. Place an order")
+        printf("\t8. Place an order\n");
         printf("\t9. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
