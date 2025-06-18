@@ -748,10 +748,48 @@ void STAFF_viewStock(Staff staff)
     }
 }
 
+void STAFF_placeOrder(Staff staff)
+{
+    printf("\nWhat products would you like to order?\n");
+    int count = 0;
+    char **product_codes = NULL;
+    int *quantities = NULL;
+    char *input = NULL;
+    while (1)
+    {
+        printf("\tEnter product code (or type EXIT to finish): ");
+        scanf("%ms", &input);
+        if (strcmp(input, "EXIT") == 0)
+        {
+            free(input);
+            input = NULL;
+            break;
+        }
+
+        printf("\tEnter quantity for product %s: ", input);
+        scanf("%d", input);
+
+        // Product product = PRODUCT_findProductByCode(input, staff.shop_code);
+        // if (product.code == NULL)
+        // {
+        //     printf("\nERROR: Product not found. Please enter a valid product code.\n");
+        // }
+        // else
+        // {
+        //     product_codes = realloc(product_codes, sizeof(char *) * (count + 1));
+        //     product_codes[count] = strdup(input);
+        //     count++;
+        //     free(input);
+        //     input = NULL;
+        //     PRODUCT_freeProduct(&product);
+        // }
+    }
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 8)
+    while (option != 9)
     {
         printf("\t1. Add Product\n");
         printf("\t2. Update Product\n");
@@ -760,7 +798,8 @@ void STAFF_menu(Staff staff)
         printf("\t5. Edit discount\n");
         printf("\t6. Delete discount\n");
         printf("\t7. View stock\n");
-        printf("\t8. Logout\n");
+        printf("\t8. Place an order")
+        printf("\t9. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -794,6 +833,10 @@ void STAFF_menu(Staff staff)
             STAFF_viewStock(staff);
             break;
         case 8:
+            printf("\nPLACE AN ORDER\n");
+            STAFF_placeOrder(staff);
+            break;
+        case 9:
             printf("\nLogging out\n\n");
             break;
         default:

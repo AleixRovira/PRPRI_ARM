@@ -54,6 +54,7 @@ void STAFF_editDiscount(Staff staff);
 void STAFF_deleteDiscount(Staff staff);
 Product *STAFF_getProductsByShop(char *shop_code, int *count);
 void STAFF_viewStock(Staff staff);
+void STAFF_placeOrder(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 
