@@ -746,12 +746,125 @@ void STAFF_viewStock(Staff staff)
         }
         PRODUCT_freeProduct(&products[i]);
     }
+    free(products);
+}
+
+char STAFF_checkIfFileExists(const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    if (file)
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
+void STAFF_createOrder(char *code, char *shop_code, char **product_codes, int *quantities, int count)
+{
+    char *buffer = NULL;
+    asprintf(&buffer, "files/orders/%s%s.txt", code, shop_code);
+    FILE *file = fopen(buffer, "a");
+    if (!file)
+    {
+        printf("\nERROR: Could not open orders file for writing.\n");
+        return;
+    }
+    free(buffer);
+
+    for (int i = 0; i < count; i++)
+    {
+        fprintf(file, "%s;%d\n", product_codes[i], quantities[i]);
+        free(product_codes[i]);
+    }
+    free(product_codes);
+    free(quantities);
+
+    fclose(file);
+    printf("\nOrder placed successfully!\n");
+}
+
+void STAFF_placeOrder(Staff staff)
+{
+    int count = 0;
+    char **product_codes = NULL;
+    int *quantities = NULL;
+    char *input = NULL;
+    char *code = NULL;
+    int exist = 0;
+    char *buffer = NULL;
+
+    do
+    {
+        printf("\n\tEnter order code: ");
+        scanf("%ms", &code);
+        buffer = NULL;
+        asprintf(&buffer, "files/orders/%s%s.txt", code, staff.shop_code);
+        exist = STAFF_checkIfFileExists(buffer);
+        free(buffer);
+        if (exist)
+        {
+            printf("\nERROR: Order code already exists. Please enter a different code.\n");
+            free(code);
+            code = NULL;
+        }
+    } while (exist);
+
+    printf("\nWhat products would you like to order?\n");
+    while (1)
+    {
+        printf("\tEnter product code (or type EXIT to finish): ");
+        scanf("%ms", &input);
+        if (strcmp(input, "EXIT") == 0)
+        {
+            free(input);
+            input = NULL;
+            break;
+        }
+
+        Product product = PRODUCT_findProductByCode(input, staff.shop_code);
+        if (product.code == NULL)
+        {
+            printf("\nERROR: Product not found. Please enter a valid product code.\n");
+        }
+        else
+        {
+            product_codes = realloc(product_codes, sizeof(char *) * (count + 1));
+            product_codes[count] = strdup(input);
+            quantities = realloc(quantities, sizeof(int) * (count + 1));
+            free(input);
+            input = NULL;
+            do
+            {
+                printf("\tEnter quantity for product %s: ", product_codes[count]);
+                scanf("%d", &quantities[count]);
+                if (quantities[count] <= 0)
+                {
+                    printf("\nERROR: Invalid quantity. Quantity must be greater than 0.\n");
+                }
+            } while (quantities[count] <= 0);
+            count++;
+            PRODUCT_freeProduct(&product);
+        }
+    }
+
+    if (count == 0)
+    {
+        printf("\nERROR: No products selected for the order.\n");
+        free(product_codes);
+        free(quantities);
+        free(code);
+        return;
+    }
+
+    STAFF_createOrder(code, staff.shop_code, product_codes, quantities, count);
+    free(code);
 }
 
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 8)
+    while (option != 9)
     {
         printf("\t1. Add Product\n");
         printf("\t2. Update Product\n");
@@ -760,7 +873,8 @@ void STAFF_menu(Staff staff)
         printf("\t5. Edit discount\n");
         printf("\t6. Delete discount\n");
         printf("\t7. View stock\n");
-        printf("\t8. Logout\n");
+        printf("\t8. Place an order\n");
+        printf("\t9. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -794,6 +908,10 @@ void STAFF_menu(Staff staff)
             STAFF_viewStock(staff);
             break;
         case 8:
+            printf("\nPLACE AN ORDER\n");
+            STAFF_placeOrder(staff);
+            break;
+        case 9:
             printf("\nLogging out\n\n");
             break;
         default:

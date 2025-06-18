@@ -54,6 +54,9 @@ void STAFF_editDiscount(Staff staff);
 void STAFF_deleteDiscount(Staff staff);
 Product *STAFF_getProductsByShop(char *shop_code, int *count);
 void STAFF_viewStock(Staff staff);
+char STAFF_checkIfFileExists(const char *filename);
+void STAFF_createOrder(char *code, char *shop_code, char **product_codes, int *quantities, int count);
+void STAFF_placeOrder(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
 
