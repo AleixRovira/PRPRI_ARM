@@ -867,24 +867,22 @@ void STAFF_receiveOrder(Staff staff)
     char *buffer = NULL;
     int exist = 0;
 
-    //do
+    do
     {
         printf("\n\tEnter order code to receive: ");
         scanf("%ms", &order_code);
         buffer = NULL;
         asprintf(&buffer, "files/orders/%s%s.txt", order_code, staff.shop_code);
-        //exist = STAFF_checkIfFileExists(buffer);
+        exist = STAFF_checkIfFileExists(buffer);
         free(buffer);
-        // if (!exist)
-        // {
-        //     printf("\nERROR: Order code does not exist. Please enter a valid order code.\n");
-        //     free(order_code);
-        //     order_code = NULL;
-        // }
-    //} while (!exist);
+        if (!exist)
+        {
+            printf("\nERROR: Order code does not exist. Please enter a valid order code.\n");
+            free(order_code);
+            order_code = NULL;
+        }
+    } while (!exist);
 
-    // Here you would implement the logic to process the received order.
-    // For simplicity, we will just print a message.
     printf("\nOrder %s received successfully!\n", order_code);
 
     free(order_code);
