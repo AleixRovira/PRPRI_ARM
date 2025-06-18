@@ -6,6 +6,7 @@
 #include <string.h>
 #include "global.h"
 #include "shop.h"
+#include "operations.h"
 
 typedef struct
 {
@@ -60,6 +61,8 @@ void STAFF_placeOrder(Staff staff);
 void STAFF_updateProductQuantityInFile(char *product_code, int quantity, char *shop_code);
 void STAFF_receiveProducts(char *filename, Staff staff);
 void STAFF_receiveOrder(Staff staff);
+Product *STAFF_getAllProducts(int *count);
+void STAFF_showFilteredStock(Staff staff, int option, char *filter, float min_price, float max_price, int min_quantity, int max_quantity);
 void STAFF_filterStock(Staff staff);
 void STAFF_menu(Staff staff);
 void STAFF_login();
