@@ -104,6 +104,15 @@ void TEST_STAF_getProductsByShop() {
     }
 }
 
+void TEST_STAFF_checkIfFileExists() {
+    char *filename = "files/staff.txt";
+    if (STAFF_checkIfFileExists(filename)) {
+        printf("TEST_STAFF_checkIfFileExists: PASSED\n");
+    } else {
+        printf("TEST_STAFF_checkIfFileExists: FAILED\n");
+    }
+}
+
 void TEST_STAFF_main() {
 
     TEST_STAFF_freeStaff();
@@ -112,4 +121,5 @@ void TEST_STAFF_main() {
     TEST_STAFF_findStaffByEmail();
     TEST_PRODUCT_findProductByCode();
     TEST_STAF_getProductsByShop();
+    TEST_STAFF_checkIfFileExists();
 }

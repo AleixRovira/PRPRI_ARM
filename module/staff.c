@@ -746,15 +746,71 @@ void STAFF_viewStock(Staff staff)
         }
         PRODUCT_freeProduct(&products[i]);
     }
+    free(products);
+}
+
+char STAFF_checkIfFileExists(const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    if (file)
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
+void STAFF_createOrder(char *code, char *shop_code, char **product_codes, int *quantities, int count)
+{
+    char *buffer = NULL;
+    asprintf(&buffer, "files/orders/%s%s.txt", code, shop_code);
+    FILE *file = fopen(buffer, "a");
+    if (!file)
+    {
+        printf("\nERROR: Could not open orders file for writing.\n");
+        return;
+    }
+    free(buffer);
+
+    for (int i = 0; i < count; i++)
+    {
+        fprintf(file, "%s;%d\n", product_codes[i], quantities[i]);
+        free(product_codes[i]);
+    }
+    free(product_codes);
+    free(quantities);
+
+    fclose(file);
+    printf("\nOrder placed successfully!\n");
 }
 
 void STAFF_placeOrder(Staff staff)
 {
-    printf("\nWhat products would you like to order?\n");
     int count = 0;
     char **product_codes = NULL;
     int *quantities = NULL;
     char *input = NULL;
+    char *code = NULL;
+    int exist = 0;
+    char *buffer = NULL;
+
+    do
+    {
+        printf("\n\tEnter order code: ");
+        scanf("%ms", &code);
+        buffer = NULL;
+        asprintf(&buffer, "files/orders/%s%s.txt", code, staff.shop_code);
+        exist = STAFF_checkIfFileExists(buffer);
+        free(buffer);
+        if (exist)
+        {
+            printf("\nERROR: Order code already exists. Please enter a different code.\n");
+            free(code);
+            code = NULL;
+        }
+    } while (exist);
+
+    printf("\nWhat products would you like to order?\n");
     while (1)
     {
         printf("\tEnter product code (or type EXIT to finish): ");
@@ -791,6 +847,18 @@ void STAFF_placeOrder(Staff staff)
             PRODUCT_freeProduct(&product);
         }
     }
+
+    if (count == 0)
+    {
+        printf("\nERROR: No products selected for the order.\n");
+        free(product_codes);
+        free(quantities);
+        free(code);
+        return;
+    }
+
+    STAFF_createOrder(code, staff.shop_code, product_codes, quantities, count);
+    free(code);
 }
 
 void STAFF_menu(Staff staff)
