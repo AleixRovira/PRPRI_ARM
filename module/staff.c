@@ -861,10 +861,39 @@ void STAFF_placeOrder(Staff staff)
     free(code);
 }
 
+void STAFF_receiveOrder(Staff staff)
+{
+    char *order_code = NULL;
+    char *buffer = NULL;
+    int exist = 0;
+
+    //do
+    {
+        printf("\n\tEnter order code to receive: ");
+        scanf("%ms", &order_code);
+        buffer = NULL;
+        asprintf(&buffer, "files/orders/%s%s.txt", order_code, staff.shop_code);
+        //exist = STAFF_checkIfFileExists(buffer);
+        free(buffer);
+        // if (!exist)
+        // {
+        //     printf("\nERROR: Order code does not exist. Please enter a valid order code.\n");
+        //     free(order_code);
+        //     order_code = NULL;
+        // }
+    //} while (!exist);
+
+    // Here you would implement the logic to process the received order.
+    // For simplicity, we will just print a message.
+    printf("\nOrder %s received successfully!\n", order_code);
+
+    free(order_code);
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 9)
+    while (option != 10)
     {
         printf("\t1. Add Product\n");
         printf("\t2. Update Product\n");
@@ -874,7 +903,8 @@ void STAFF_menu(Staff staff)
         printf("\t6. Delete discount\n");
         printf("\t7. View stock\n");
         printf("\t8. Place an order\n");
-        printf("\t9. Logout\n");
+        printf("\t9. Receive order\n");
+        printf("\t10. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -912,6 +942,10 @@ void STAFF_menu(Staff staff)
             STAFF_placeOrder(staff);
             break;
         case 9:
+            printf("\nRECEIVE ORDER\n");
+            STAFF_receiveOrder(staff);
+            break;
+        case 10:
             printf("\nLogging out\n\n");
             break;
         default:
