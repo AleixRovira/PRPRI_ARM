@@ -679,10 +679,50 @@ void STAFF_deleteDiscount(Staff staff)
     DISCOUNT_freeDiscount(&discount);
 }
 
+Product *STAFF_getProductsByShop(char *shop_code, int *count)
+{
+    FILE *file = fopen("files/products.txt", "r");
+    if (!file)
+    {
+        return NULL;
+    }
+
+    Product *products = NULL;
+
+    Product product;
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.code, &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 7)
+    {
+        if (strcmp(product.shop_code, shop_code) == 0)
+        {
+            products = realloc(products, sizeof(Product) * (*count + 1));
+            products[*count] = product;
+            (*count)++;
+        }
+        else
+        {
+            PRODUCT_freeProduct(&product);
+        }
+    }
+
+    fclose(file);
+    return products;
+}
+
+void STAFF_viewStock(Staff staff)
+{
+    int count = 0;
+    Product *products = STAFF_getProductsByShop(staff.shop_code, &count);
+    if (products == NULL)
+    {
+        printf("\nNo products found for this shop\n");
+        return;
+    }
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 7)
+    while (option != 8)
     {
         printf("\t1. Add Product\n");
         printf("\t2. Update Product\n");
@@ -690,7 +730,8 @@ void STAFF_menu(Staff staff)
         printf("\t4. Add discount\n");
         printf("\t5. Edit discount\n");
         printf("\t6. Delete discount\n");
-        printf("\t7. Logout\n");
+        printf("\t7. View stock\n");
+        printf("\t8. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -720,6 +761,10 @@ void STAFF_menu(Staff staff)
             STAFF_deleteDiscount(staff);
             break;
         case 7:
+            printf("\nVIEW STOCK\n");
+            STAFF_viewStock(staff);
+            break;
+        case 8:
             printf("\nLogging out\n\n");
             break;
         default:
