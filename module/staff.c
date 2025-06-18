@@ -1148,6 +1148,13 @@ void STAFF_calculateStockValue()
         }
         break;
     }
+
+    float total_value = 0.0f;
+    for (int i = 0; i < count; i++)
+    {
+        total_value += products[i].price * products[i].quantity;
+        PRODUCT_freeProduct(&products[i]);
+    }
 }
 
 void STAFF_menu(Staff staff)
