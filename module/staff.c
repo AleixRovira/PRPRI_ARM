@@ -1155,6 +1155,10 @@ void STAFF_calculateStockValue()
         total_value += products[i].price * products[i].quantity;
         PRODUCT_freeProduct(&products[i]);
     }
+    free(products);
+    products = NULL;
+
+    printf("\nTotal stock value: %.2f €\n", total_value);
 }
 
 void STAFF_menu(Staff staff)
