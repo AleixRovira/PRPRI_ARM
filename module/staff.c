@@ -961,10 +961,32 @@ void STAFF_receiveOrder(Staff staff)
     order_code = NULL;
 }
 
+Product *STAFF_getAllProducts(int *count)
+{
+    FILE *file = fopen("files/products.txt", "r");
+    if (!file)
+    {
+        return NULL;
+    }
+
+    Product *products = NULL;
+    Product product;
+
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.code, &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 7)
+    {
+        products = realloc(products, sizeof(Product) * (*count + 1));
+        products[*count] = product;
+        (*count)++;
+    }
+
+    fclose(file);
+    return products;
+}
+
 void STAFF_showFilteredStock(Staff staff, int option, char *filter, float min_price, float max_price, int min_quantity, int max_quantity)
 {
     int count = 0;
-    Product *products = STAFF_getProductsByShop(staff.shop_code, &count);
+    Product *products = STAFF_getAllProducts(&count);
     if (products == NULL)
     {
         printf("\nNo products found for this shop\n");
