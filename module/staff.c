@@ -731,6 +731,21 @@ void STAFF_viewStock(Staff staff)
             printf("\tDescription: %s\n\n", products[i].description);
         }
     }
+
+    printf("OUT OF STOCK:\n");
+    for (int i = 0; i < count; i++)
+    {
+        if (products[i].quantity <= 0)
+        {
+            printf("\tCode: %s\n", products[i].code);
+            printf("\tName: %s\n", products[i].name);
+            printf("\tQuantity: %d\n", products[i].quantity);
+            printf("\tCategory: %s\n", products[i].category);
+            printf("\tPrice: %.2f €\n", products[i].price);
+            printf("\tDescription: %s\n\n", products[i].description);
+        }
+        PRODUCT_freeProduct(&products[i]);
+    }
 }
 
 void STAFF_menu(Staff staff)
