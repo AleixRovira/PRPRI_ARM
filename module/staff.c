@@ -782,7 +782,7 @@ void STAFF_placeOrder(Staff staff)
             {
                 printf("\tEnter quantity for product %s: ", product_codes[count]);
                 scanf("%d", &quantities[count]);
-                if (quantities[count] < 0)
+                if (quantities[count] <= 0)
                 {
                     printf("\nERROR: Invalid quantity. Quantity must be greater than 0.\n");
                 }
