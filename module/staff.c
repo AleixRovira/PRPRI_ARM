@@ -961,6 +961,53 @@ void STAFF_receiveOrder(Staff staff)
     order_code = NULL;
 }
 
+void STAFF_showFilteredStock(Staff staff, int option, char *filter, float min_price, float max_price, int min_quantity, int max_quantity)
+{
+    int count = 0;
+    Product *products = STAFF_getProductsByShop(staff.shop_code, &count);
+    if (products == NULL)
+    {
+        printf("\nNo products found for this shop\n");
+        return;
+    }
+
+    int found = 0;
+    printf("\nFILTERED STOCK:\n");
+    for (int i = 0; i < count; i++)
+    {
+        int show_product = 1;
+
+        if (option == 1 && filter != NULL && strcasecmp(products[i].name, filter) != 0)
+            show_product = 0;
+        else if (option == 2 && filter != NULL && strcasecmp(products[i].category, filter) != 0)
+            show_product = 0;
+        else if (option == 3 && !OP_isInRange(products[i].price, min_price, max_price, 1))
+            show_product = 0;
+        else if (option == 4 && !OP_isInRange(products[i].quantity, min_quantity, max_quantity, 1))
+            show_product = 0;
+        else if (option == 5 && filter != NULL && strcasecmp(products[i].shop_code, filter) != 0)
+            show_product = 0;
+
+        if (show_product)
+        {
+            found = 1;
+            printf("\tCode: %s\n", products[i].code);
+            printf("\tName: %s\n", products[i].name);
+            printf("\tQuantity: %d\n", products[i].quantity);
+            printf("\tCategory: %s\n", products[i].category);
+            printf("\tPrice: %.2f €\n", products[i].price);
+            printf("\tDescription: %s\n\n", products[i].description);
+        }
+        PRODUCT_freeProduct(&products[i]);
+    }
+    if (!found)
+    {
+        printf("\nNo products found matching the filter criteria.\n");
+    }
+    free(products);
+    products = NULL;
+}
+
 void STAFF_filterStock(Staff staff)
 {
     int option = 0;
@@ -1001,21 +1048,19 @@ void STAFF_filterStock(Staff staff)
         {
             case 1:
                 printf("\tEnter product name to filter: ");
-                scanf(" %ms", &filter);
+                scanf(" %m[^\n]", &filter);
                 break;
             case 2:
                 printf("\tEnter product category to filter: ");
-                scanf(" %ms", &filter);
+                scanf(" %m[^\n]", &filter);
                 break;
             case 3:
-                float min_price, max_price;
                 printf("\tEnter minimum price: ");
                 scanf("%f", &min_price);
                 printf("\tEnter maximum price: ");
                 scanf("%f", &max_price);
                 break;
             case 4:
-                int min_quantity, max_quantity;
                 printf("\tEnter minimum quantity: ");
                 scanf("%d", &min_quantity);
                 printf("\tEnter maximum quantity: ");
@@ -1026,7 +1071,15 @@ void STAFF_filterStock(Staff staff)
                 scanf(" %ms", &filter);
                 break;
         }
+        STAFF_showFilteredStock(staff, option, filter, min_price, max_price, min_quantity, max_quantity);
+        if (filter != NULL)
+        {
+            free(filter);
+            filter = NULL;
+        }
     }
+
+    printf("\n");
 }
 
 void STAFF_menu(Staff staff)

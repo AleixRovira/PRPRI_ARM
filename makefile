@@ -16,7 +16,7 @@ operations.o: module/operations.c
 shop.o: module/shop.c global.o
 	gcc -c module/shop.c -ggdb
 
-staff.o: module/staff.c shop.o global.o
+staff.o: module/staff.c shop.o global.o operations.o
 	gcc -c module/staff.c -ggdb
 
 client.o: module/client.c shop.o global.o operations.o
