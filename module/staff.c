@@ -861,6 +861,69 @@ void STAFF_placeOrder(Staff staff)
     free(code);
 }
 
+void STAFF_updateProductQuantityInFile(char *product_code, int quantity, char *shop_code)
+{
+    FILE *file = fopen("files/products.txt", "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open products file for updating.\n");
+        return;
+    }
+
+    FILE *aux = fopen("files/temp_products.txt", "w");
+    if (!aux)
+    {
+        fclose(file);
+        printf("\nERROR: Could not create temporary file for updating products.\n");
+        return;
+    }
+
+    Product product;
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.code, &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 7)
+    {
+        if (strcmp(product.code, product_code) == 0 && strcmp(product.shop_code, shop_code) == 0)
+        {
+            product.quantity += quantity;
+            fprintf(aux, "%s;%s;%s;%.2f;%d;%s;%s\n", product.code, product.name, product.category, product.price, product.quantity, product.description, product.shop_code);
+        }
+        else
+        {
+            fprintf(aux, "%s;%s;%s;%.2f;%d;%s;%s\n", product.code, product.name, product.category, product.price, product.quantity, product.description, product.shop_code);
+        }
+        PRODUCT_freeProduct(&product);
+    }
+
+    fclose(file);
+    fclose(aux);
+
+    remove("files/products.txt");
+    rename("files/temp_products.txt", "files/products.txt");
+
+    printf("\nProduct quantity updated successfully!\n");
+}
+
+void STAFF_receiveProducts(char *filename, Staff staff)
+{
+    FILE *file = fopen(filename, "r");
+    if (!file)
+    {
+        printf("\nERROR: Could not open order file for reading.\n");
+        return;
+    }
+
+    char *product_code = NULL;
+    int quantity = 0;
+    while (fscanf(file, " %m[^;];%d", &product_code, &quantity) == 2)
+    {
+        STAFF_updateProductQuantityInFile(product_code, quantity, staff.shop_code);
+        printf("Received %d of product %s\n", quantity, product_code);
+        free(product_code);
+        product_code = NULL;
+    }
+
+    fclose(file);
+}
+
 void STAFF_receiveOrder(Staff staff)
 {
     char *order_code = NULL;
@@ -874,18 +937,28 @@ void STAFF_receiveOrder(Staff staff)
         buffer = NULL;
         asprintf(&buffer, "files/orders/%s%s.txt", order_code, staff.shop_code);
         exist = STAFF_checkIfFileExists(buffer);
-        free(buffer);
+        
         if (!exist)
         {
             printf("\nERROR: Order code does not exist. Please enter a valid order code.\n");
             free(order_code);
             order_code = NULL;
+            free(buffer);
         }
     } while (!exist);
 
+    STAFF_receiveProducts(buffer, staff);
+    if (remove(buffer) != 0)
+    {
+        printf("\nERROR: Could not delete order file after processing.\n");
+    }
+    free(buffer);
+    buffer = NULL;
+    
     printf("\nOrder %s received successfully!\n", order_code);
 
     free(order_code);
+    order_code = NULL;
 }
 
 void STAFF_menu(Staff staff)
