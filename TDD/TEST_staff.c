@@ -90,7 +90,7 @@ void TEST_PRODUCT_findProductByCode() {
     }
 }
 
-void TEST_STAF_getProductsByShop() {
+void TEST_STAFF_getProductsByShop() {
     int count = 0;
     Product *products = STAFF_getProductsByShop("S001", &count);
     if (products != NULL && count > 0) {
@@ -113,6 +113,20 @@ void TEST_STAFF_checkIfFileExists() {
     }
 }
 
+void TEST_STAFF_getAllProducts() {
+    int count = 0;
+    Product *products = STAFF_getProductsByShop("S001", &count);
+    if (products != NULL && count > 0) {
+        printf("TEST_STAFF_getAllProducts: PASSED\n");
+        for (int i = 0; i < count; i++) {
+            PRODUCT_freeProduct(&products[i]);
+        }
+        free(products);
+    } else {
+        printf("TEST_STAFF_getAllProducts: FAILED\n");
+    }
+}
+
 void TEST_STAFF_main() {
 
     TEST_STAFF_freeStaff();
@@ -120,6 +134,7 @@ void TEST_STAFF_main() {
     TEST_DISCOUNT_freeDiscount();
     TEST_STAFF_findStaffByEmail();
     TEST_PRODUCT_findProductByCode();
-    TEST_STAF_getProductsByShop();
+    TEST_STAFF_getProductsByShop();
     TEST_STAFF_checkIfFileExists();
+    TEST_STAFF_getAllProducts();
 }
