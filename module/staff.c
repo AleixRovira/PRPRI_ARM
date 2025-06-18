@@ -767,7 +767,7 @@ void STAFF_placeOrder(Staff staff)
         }
 
         printf("\tEnter quantity for product %s: ", input);
-        scanf("%d", input);
+        scanf("%s", input);
 
         // Product product = PRODUCT_findProductByCode(input, staff.shop_code);
         // if (product.code == NULL)
