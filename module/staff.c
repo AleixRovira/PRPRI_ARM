@@ -981,15 +981,50 @@ void STAFF_filterStock(Staff staff)
         {
             printf("\nERROR: Invalid option. Please try again.\n");
         }
-        else if(option == 6)
-        {
-            printf("\nExiting filter menu.\n");
-            break;
-        }
         else
         {
-            //Mostrar inventario filtrado
             break;
+        }
+    }
+
+    if(option == 6)
+    {
+        printf("\nExiting filter stock menu.\n");
+        return;
+    }
+    else
+    {
+        char *filter = NULL;
+        float min_price = 0.0f, max_price = 0.0f;
+        int min_quantity = 0, max_quantity = 0;
+        switch(option)
+        {
+            case 1:
+                printf("\tEnter product name to filter: ");
+                scanf(" %ms", &filter);
+                break;
+            case 2:
+                printf("\tEnter product category to filter: ");
+                scanf(" %ms", &filter);
+                break;
+            case 3:
+                float min_price, max_price;
+                printf("\tEnter minimum price: ");
+                scanf("%f", &min_price);
+                printf("\tEnter maximum price: ");
+                scanf("%f", &max_price);
+                break;
+            case 4:
+                int min_quantity, max_quantity;
+                printf("\tEnter minimum quantity: ");
+                scanf("%d", &min_quantity);
+                printf("\tEnter maximum quantity: ");
+                scanf("%d", &max_quantity);
+                break;
+            case 5:
+                printf("\tEnter shop code to filter: ");
+                scanf(" %ms", &filter);
+                break;
         }
     }
 }
