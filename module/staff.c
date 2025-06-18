@@ -522,7 +522,7 @@ void STAFF_addDiscount(Staff staff)
     discount.shop_code = strdup(staff.shop_code);
 
     // Guardar información en el archivo
-    for(int i = 0; i < num_products; i++)
+    for (int i = 0; i < num_products; i++)
     {
         char *buffer = NULL;
         asprintf(&buffer, "%s;%s;%s;%s;%s", discount.discount_code, product_codes[i], discount.shop_code, discount.start_date, discount.end_date);
@@ -716,6 +716,20 @@ void STAFF_viewStock(Staff staff)
     {
         printf("\nNo products found for this shop\n");
         return;
+    }
+
+    printf("\nSTOCK:\n");
+    for (int i = 0; i < count; i++)
+    {
+        if (products[i].quantity > 0)
+        {
+            printf("\tCode: %s\n", products[i].code);
+            printf("\tName: %s\n", products[i].name);
+            printf("\tQuantity: %d\n", products[i].quantity);
+            printf("\tCategory: %s\n", products[i].category);
+            printf("\tPrice: %.2f €\n", products[i].price);
+            printf("\tDescription: %s\n\n", products[i].description);
+        }
     }
 }
 
