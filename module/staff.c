@@ -961,10 +961,43 @@ void STAFF_receiveOrder(Staff staff)
     order_code = NULL;
 }
 
+void STAFF_filterStock(Staff staff)
+{
+    int option = 0;
+
+    while (option < 1 || option > 6)
+    {
+        printf("\nFILTER STOCK\n");
+        printf("\t1. Filter by Name\n");
+        printf("\t2. Filter by Category\n");
+        printf("\t3. Filter by Price Range\n");
+        printf("\t4. Filter by Quantity Range\n");
+        printf("\t5. Filter by Shop\n");
+        printf("\t6. Exit\n");
+        printf("Option: ");
+        scanf("%d", &option);
+
+        if(option < 1 || option > 6)
+        {
+            printf("\nERROR: Invalid option. Please try again.\n");
+        }
+        else if(option == 6)
+        {
+            printf("\nExiting filter menu.\n");
+            break;
+        }
+        else
+        {
+            //Mostrar inventario filtrado
+            break;
+        }
+    }
+}
+
 void STAFF_menu(Staff staff)
 {
     int option = 0;
-    while (option != 10)
+    while (option != 12)
     {
         printf("\t1. Add Product\n");
         printf("\t2. Update Product\n");
@@ -975,7 +1008,9 @@ void STAFF_menu(Staff staff)
         printf("\t7. View stock\n");
         printf("\t8. Place an order\n");
         printf("\t9. Receive order\n");
-        printf("\t10. Logout\n");
+        printf("\t10. Filter stock\n");
+        printf("\t11. Calculate total stock value\n");
+        printf("\t12. Logout\n");
         printf("Option: ");
         scanf("%d", &option);
         switch (option)
@@ -1017,6 +1052,13 @@ void STAFF_menu(Staff staff)
             STAFF_receiveOrder(staff);
             break;
         case 10:
+            printf("\nFILTER STOCK\n");
+            STAFF_filterStock(staff);
+            break;
+        case 11:
+            printf("\nCALCULATE TOTAL STOCK VALUE\n");
+            break;
+        case 12:
             printf("\nLogging out\n\n");
             break;
         default:
