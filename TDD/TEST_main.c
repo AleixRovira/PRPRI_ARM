@@ -10,10 +10,10 @@ int main()
 {
     printf("Running tests...\n\n");
     
-    // TEST_OP_main();
-    // TEST_SHOP_main();
-    // TEST_STAFF_main();
-    // TEST_GLOBAL_main();
+    TEST_OP_main();
+    TEST_SHOP_main();
+    TEST_STAFF_main();
+    TEST_GLOBAL_main();
     TEST_CLIENT_main();
 
     printf("\nAll tests completed.\n");
