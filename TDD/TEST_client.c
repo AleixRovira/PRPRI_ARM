@@ -39,13 +39,17 @@ void TEST_CLIENT_findClientByEmail() {
 void TEST_CLIENT_getNearShops() {
     float latitude = 40.4168f;
     float longitude = -3.7038f;
+    int n_shops = 0;
 
-    Shop *near_shops = CLIENT_getNearShops(latitude, longitude);
-    for(int i = 0; i < 5 &&near_shops[i].name != NULL; i++) {
+    Shop *near_shops = CLIENT_getNearShops(latitude, longitude, &n_shops);
+    for(int i = 0; i < n_shops; i++) {
         printf("Shop %d: %s, Address: %s, Phone: %s, Email: %s, Coordinates: (%.2f, %.2f)\n",
                i + 1, near_shops[i].name, near_shops[i].address, near_shops[i].phone,
                near_shops[i].email, near_shops[i].latitude, near_shops[i].longitude);
+        SHOP_freeShop(&near_shops[i]);
     }
+    free(near_shops);
+    near_shops = NULL;
 }
 
 void TEST_CLIENT_getDiscounts() {
@@ -53,6 +57,9 @@ void TEST_CLIENT_getDiscounts() {
     Discount *discounts = CLIENT_getDiscounts(&n_discounts);
     if (n_discounts > 0) {
         printf("TEST_CLIENT_getDiscounts: PASSED\n");
+        for (int i = 0; i < n_discounts; i++) {
+            DISCOUNT_freeDiscount(&discounts[i]);
+        }
         free(discounts);
     } else {
         printf("TEST_CLIENT_getDiscounts: FAILED\n");
@@ -71,6 +78,9 @@ void TEST_CLIENT_getShopsWithDiscounts() {
     Shop *shops_with_discounts = CLIENT_getShopsWithDiscounts(discounts, n_discounts, &n_shops);
     if (n_shops > 0) {
         printf("TEST_CLIENT_getShopsWithDiscounts: PASSED\n");
+        for (int i = 0; i < n_shops; i++) {
+            SHOP_freeShop(&shops_with_discounts[i]);
+        }
         free(shops_with_discounts);
     } else {
         printf("TEST_CLIENT_getShopsWithDiscounts: FAILED\n");
