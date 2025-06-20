@@ -18,7 +18,7 @@ typedef struct {
 void CLIENT_freeClient(Client *client);
 Client CLIENT_findClientByEmail(char *email);
 void CLIENT_register();
-Shop *CLIENT_getNearShops(float latitude, float longitude);
+Shop *CLIENT_getNearShops(float latitude, float longitude, int *n_shops);
 void CLIENT_findNearShops();
 Discount *CLIENT_getDiscounts(int *n_discounts);
 Shop *CLIENT_getShopsWithDiscounts(Discount *discounts, int n_discounts, int *n_shops);

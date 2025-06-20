@@ -124,55 +124,57 @@ void CLIENT_register()
     printf("\nClient registered successfully!\n");
 }
 
-Shop *CLIENT_getNearShops(float latitude, float longitude)
+Shop *CLIENT_getNearShops(float latitude, float longitude, int *n_shops)
 {
     FILE *file = fopen("files/shops.txt", "r");
     if (!file)
     {
         printf("\nERROR: Could not open shops file.\n");
+        *n_shops = 0;
         return NULL;
     }
 
-    int n_shops = 0;
+    int max_shops = 100;
+    Shop *shops = malloc(sizeof(Shop) * max_shops);
+    Coordinates *coords = malloc(sizeof(Coordinates) * max_shops);
+
+    *n_shops = 0;
     Shop shop;
-    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f", &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
+    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f",
+                  &shop.code, &shop.name, &shop.address, &shop.phone, &shop.email, &shop.latitude, &shop.longitude) == 7)
     {
-        n_shops++;
+        if (*n_shops >= max_shops)
+            break;
+        shops[*n_shops].code = strdup(shop.code);
+        shops[*n_shops].name = strdup(shop.name);
+        shops[*n_shops].address = strdup(shop.address);
+        shops[*n_shops].phone = strdup(shop.phone);
+        shops[*n_shops].email = strdup(shop.email);
+        shops[*n_shops].latitude = shop.latitude;
+        shops[*n_shops].longitude = shop.longitude;
+        coords[*n_shops].latitude = shop.latitude;
+        coords[*n_shops].longitude = shop.longitude;
+        (*n_shops)++;
         SHOP_freeShop(&shop);
-    }
-
-    if (n_shops == 0)
-    {
-        printf("\nERROR: No shops found in the file.\n");
-        fclose(file);
-        return NULL;
-    }
-
-    Shop *shops = malloc(sizeof(Shop) * n_shops);
-    Coordinates *coords = malloc(sizeof(Coordinates) * n_shops);
-
-    rewind(file);
-    int i = 0;
-    while (fscanf(file, " %m[^;];%m[^;];%m[^;];%m[^;];%m[^;];%f;%f\n", &shops[i].code, &shops[i].name, &shops[i].address, &shops[i].phone, &shops[i].email, &shops[i].latitude, &shops[i].longitude) == 7)
-    {
-        coords[i].latitude = shops[i].latitude;
-        coords[i].longitude = shops[i].longitude;
-        i++;
     }
     fclose(file);
 
-    char *selected = calloc(n_shops, sizeof(char));
+    if (*n_shops == 0)
+    {
+        free(shops);
+        free(coords);
+        return NULL;
+    }
+
+    char *selected = calloc(*n_shops, sizeof(char));
     Shop *nearest_shops = malloc(sizeof(Shop) * 5);
 
-    Coordinates ref;
-    ref.latitude = latitude;
-    ref.longitude = longitude;
-
+    Coordinates ref = {latitude, longitude};
     int found = 0;
-    while (found < 5 && found < n_shops)
+    while (found < 5 && found < *n_shops)
     {
         int nearest = -1;
-        for (int j = 0; j < n_shops; j++)
+        for (int j = 0; j < *n_shops; j++)
         {
             if (selected[j])
                 continue;
@@ -199,10 +201,13 @@ Shop *CLIENT_getNearShops(float latitude, float longitude)
         }
     }
 
+    for (int i = 0; i < *n_shops; i++)
+        SHOP_freeShop(&shops[i]);
+    free(shops);
     free(coords);
     free(selected);
-    free(shops);
 
+    *n_shops = found;
     return nearest_shops;
 }
 
@@ -230,16 +235,17 @@ void CLIENT_findNearShops()
         }
     } while (longitude < -180.0f || longitude > 180.0f);
 
-    Shop *near_shops = CLIENT_getNearShops(latitude, longitude);
+    int n_shops;
+    Shop *near_shops = CLIENT_getNearShops(latitude, longitude, &n_shops);
 
-    if (near_shops == NULL)
+    if (n_shops == 0)
     {
         printf("\nERROR: No shops found near your location.\n");
         return;
     }
 
     printf("\nNEAR SHOPS:\n");
-    for(int i = 0; i < 5 && near_shops[i].name != NULL; i++)
+    for (int i = 0; i < n_shops; i++)
     {
         printf("\nShop %d:\n", i + 1);
         printf("\tName: %s\n", near_shops[i].name);
@@ -247,13 +253,17 @@ void CLIENT_findNearShops()
         printf("\tPhone: %s\n", near_shops[i].phone);
         printf("\tEmail: %s\n", near_shops[i].email);
         printf("\tCoordinates: (%.2f, %.2f)\n\n", near_shops[i].latitude, near_shops[i].longitude);
+        SHOP_freeShop(&near_shops[i]);
     }
+    free(near_shops);
+    near_shops = NULL;
 }
 
 Discount *CLIENT_getDiscounts(int *n_discounts)
 {
     FILE *file = fopen("files/discounts.txt", "r");
-    if (!file) {
+    if (!file)
+    {
         printf("\nERROR: Could not open discounts file.\n");
         *n_discounts = 0;
         return NULL;
@@ -343,7 +353,7 @@ void CLIENT_viewDiscounts()
     int n_discounts = 0;
     Discount *discounts = CLIENT_getDiscounts(&n_discounts);
 
-    if(n_discounts == 0)
+    if (n_discounts == 0)
     {
         printf("\nNo discounts found.\n");
         return;
@@ -352,7 +362,7 @@ void CLIENT_viewDiscounts()
     int n_shops = 0;
     Shop *shops_with_discounts = CLIENT_getShopsWithDiscounts(discounts, n_discounts, &n_shops);
 
-    if(n_shops == 0)
+    if (n_shops == 0)
     {
         printf("\nNo shops found with discounts.\n");
         free(discounts);
@@ -360,10 +370,10 @@ void CLIENT_viewDiscounts()
     }
 
     printf("\nDISCOUNTS:\n");
-    for(int i = 0; i < n_shops; i++)
+    for (int i = 0; i < n_shops; i++)
     {
         printf("\nSHOP %d:\n", i + 1);
-        for(int j = 0; j < n_discounts; j++)
+        for (int j = 0; j < n_discounts; j++)
         {
             if (strcmp(shops_with_discounts[i].code, discounts[j].shop_code) == 0)
             {
@@ -376,19 +386,18 @@ void CLIENT_viewDiscounts()
         }
     }
 
-    for(int i = 0; i < n_discounts; i++)
+    for (int i = 0; i < n_discounts; i++)
     {
         DISCOUNT_freeDiscount(&discounts[i]);
     }
     free(discounts);
 
-    for(int i = 0; i < n_shops; i++)
+    for (int i = 0; i < n_shops; i++)
     {
         SHOP_freeShop(&shops_with_discounts[i]);
     }
     free(shops_with_discounts);
     discounts = NULL;
-
 }
 
 void CLIENT_menu()

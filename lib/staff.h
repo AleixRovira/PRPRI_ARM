@@ -44,7 +44,7 @@ Staff STAFF_findStaffByEmail(char *email);
 void STAFF_register();
 Product PRODUCT_findProductByCode(char *name, char *shop_code);
 void STAFF_addProduct(Staff staff);
-void STAFF_updateProductInFile(char *old_name, Product new_product);
+void STAFF_updateProductInFile(char *old_code, Product new_product);
 void STAFF_updateProduct(Staff staff);
 void STAFF_updateShopInFile(Shop shop);
 void STAFF_updateShop(Staff staff);
