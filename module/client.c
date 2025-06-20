@@ -253,7 +253,10 @@ void CLIENT_findNearShops()
         printf("\tPhone: %s\n", near_shops[i].phone);
         printf("\tEmail: %s\n", near_shops[i].email);
         printf("\tCoordinates: (%.2f, %.2f)\n\n", near_shops[i].latitude, near_shops[i].longitude);
+        SHOP_freeShop(&near_shops[i]);
     }
+    free(near_shops);
+    near_shops = NULL;
 }
 
 Discount *CLIENT_getDiscounts(int *n_discounts)

@@ -176,10 +176,13 @@ void STAFF_addProduct(Staff staff)
         {
             printf("\nERROR: Product code already exists. Please enter a different code.\n");
             PRODUCT_freeProduct(&product);
+            free(input);
+            input = NULL;
         }
-        free(input);
-        input = NULL;
-    } while (product.code == NULL);
+    } while (product.code != NULL);
+    product.code = strdup(input);
+    free(input);
+    input = NULL;
 
     printf("\tEnter product name: ");
     scanf(" %ms", &product.name);
@@ -222,8 +225,9 @@ void STAFF_addProduct(Staff staff)
     printf("\nProduct added successfully!\n");
 }
 
-void STAFF_updateProductInFile(char *old_name, Product new_product)
+void STAFF_updateProductInFile(char *old_code, Product new_product)
 {
+
     FILE *file = fopen("files/products.txt", "r");
     if (!file)
     {
@@ -242,7 +246,7 @@ void STAFF_updateProductInFile(char *old_name, Product new_product)
     Product product;
     while (fscanf(file, " %m[^;];%m[^;];%m[^;];%f;%d;%m[^;];%ms", &product.code, &product.name, &product.category, &product.price, &product.quantity, &product.description, &product.shop_code) == 7)
     {
-        if (strcmp(product.name, old_name) == 0 && strcmp(product.shop_code, new_product.shop_code) == 0)
+        if (strcmp(product.code, old_code) == 0 && strcmp(product.shop_code, new_product.shop_code) == 0)
         {
             fprintf(aux, "%s;%s;%s;%.2f;%d;%s;%s\n", new_product.code, new_product.name, new_product.category, new_product.price, new_product.quantity, new_product.description, new_product.shop_code);
         }
@@ -265,10 +269,11 @@ void STAFF_updateProductInFile(char *old_name, Product new_product)
 void STAFF_updateProduct(Staff staff)
 {
     Product product;
+    char *input = NULL;
 
     printf("\tEnter product code to update: ");
-    scanf("%ms", &product.code);
-    product = PRODUCT_findProductByCode(product.code, staff.shop_code);
+    scanf("%ms", &input);
+    product = PRODUCT_findProductByCode(input, staff.shop_code);
     if (product.code == NULL)
     {
         printf("\nERROR: Product not found.\n");
@@ -276,8 +281,10 @@ void STAFF_updateProduct(Staff staff)
         product.code = NULL;
         return;
     }
+    free(input);
+    input = NULL;
 
-    Product aux;
+    Product aux = {NULL, NULL, NULL, 0.0f, 0, NULL, NULL};
     printf("\tCurrent product name: %s\n", product.name);
     printf("\tEnter new product name: ");
     scanf("%ms", &aux.name);
@@ -313,8 +320,9 @@ void STAFF_updateProduct(Staff staff)
     scanf(" %m[^\n]", &aux.description);
 
     aux.shop_code = strdup(product.shop_code);
+    aux.code = strdup(product.code);
 
-    STAFF_updateProductInFile(product.name, aux);
+    STAFF_updateProductInFile(product.code, aux);
 
     PRODUCT_freeProduct(&product);
     PRODUCT_freeProduct(&aux);
